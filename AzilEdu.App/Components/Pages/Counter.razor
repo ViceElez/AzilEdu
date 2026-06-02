@@ -1,0 +1,18 @@
+﻿@page "/counter"
+@rendermode InteractiveServer
+
+<h3>Current Count: <span>@currCount</span></h3>
+<button @onclick="Add">+</button>
+<button @onclick="Reduce">-</button>
+
+@code {
+    int currCount = 0;
+    void Add()
+    {
+        currCount++;
+    }
+    void Reduce()
+    {
+        currCount--;
+    }
+}

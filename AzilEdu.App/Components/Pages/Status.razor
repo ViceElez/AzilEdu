@@ -1,0 +1,58 @@
+﻿@page "/status"
+@rendermode InteractiveServer
+<PageTitle>Status</PageTitle>
+
+
+<h3 class="@classStatus">This text changes color</h3>
+<button @onclick="ChangeColor">Change text color</button>
+<br />
+<label>
+    Name:
+    <input @bind="newName" @bind:event="oninput" />
+</label>
+
+<label>
+    Surname:
+    <input @bind="newSurname" @bind:event="oninput" />
+</label>
+<button @onclick="ChangeVisibility">Hide your name</button>
+
+
+@if (isVisible)
+{
+    <p>Your name:@newName @newSurname</p>
+}
+
+<br />
+
+<p>Games List:</p>
+<ul>
+    @foreach (var game in games)
+    {
+        <li>@game</li>
+    }
+</ul>
+
+@code {
+    string classStatus = "text-success";
+    string newName = "";
+    string newSurname = "";
+    bool isVisible = true;
+
+    string[] games = new string[] { "Chess", "Monopoly", "Scrabble" };
+    void ChangeColor()
+    {
+        if (classStatus == "text-success")
+        {
+            classStatus = "text-danger";
+        }
+        else
+        {
+            classStatus = "text-success";
+        }
+    }
+    void ChangeVisibility()
+    {
+        isVisible = !isVisible;
+    }
+}

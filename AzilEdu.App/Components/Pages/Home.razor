@@ -2,18 +2,21 @@
 
 <PageTitle>Azil za životinje</PageTitle>
 
-<h1>Dobro došli!</h1>
+<header>
+    Dobro došli! u @applicationName
+</header>
 
-<p>
-    AzilEdu je aplikacija za upravljanje podacima o životinjama,
-    vrstama, pasminama i udomljavanju.
-</p>
+<section>
+    <h3>
+        @description
+    </h3>
+    <p>
+       @status
+    </p>
+</section>
 
-<p>
-    U sljedećim lekcijama postupno ćemo dodavati nove funkcionalnosti
-    i povezivati korisničko sučelje s API slojem.
-</p>
-
-<p>
-    nesto
-</p>
+@code{
+    string applicationName = "Azil za životinje";
+    string description = "AzilEdu je aplikacija za upravljanje podacima o životinjama,vrstama, pasminama i udomljavanju.";
+    string status = "U sljedećim lekcijama postupno ćemo dodavati nove funkcionalnosti i povezivati korisničko sučelje s API slojem.";
+}

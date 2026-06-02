@@ -1,0 +1,35 @@
+﻿@page "/todolist"
+@rendermode InteractiveServer
+<PageTitle>To-Do List</PageTitle>
+
+<h3>ToDoList</h3>
+<label>
+    New Task:
+    <input @bind="newTask"/>
+</label>
+<button @onclick="AddTask">Add Task</button>
+<ul>
+    @foreach (var task in tasks)
+    {
+        <li>@task</li>
+    }
+</ul>
+
+@code {
+    List<string> tasks = new()
+    {
+        "Buy groceries",
+        "Call mom",
+        "Finish Blazor project"
+    };
+    string newTask = "";
+    void AddTask()
+    {
+        if (!string.IsNullOrWhiteSpace(newTask))
+        {
+            tasks.Add(newTask);
+            newTask = "";
+        }
+    }
+}
+

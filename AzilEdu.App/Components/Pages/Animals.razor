@@ -1,77 +1,133 @@
 ﻿@page "/animals"
+@rendermode InteractiveServer
+@using AzilEdu.Shared.Models
+@using System.Net.Http.Json
+@inject HttpClient Http
 
-<MudText Typo="Typo.h1" Class="d-flex justify-center" GutterBottom="true">
-    Animals
+<MudText Typo="Typo.h4" GutterBottom="true">Životinje</MudText>
+<MudText Typo="Typo.body1" Class="mb-4">
+    Prikazujemo životinje koje dolaze iz SQLite baze preko API projekta.
 </MudText>
 
-<MudText Typo="Typo.body1" Class="d-flex justify-center mt-2">
-    Pregled zivotinja u azilu
-</MudText>
-
-<MudText Typo="Typo.h3">
-        Zivotinje u azilu   
-</MudText>
-
-
-<MudGrid Class="mt-3">
-    <MudItem xs="12" md="4">
-        <MudPaper Class="pa-4" Elevation="2">
-            <MudText Typo="Typo.h6">Sve životinje</MudText>
-            <MudText Typo="Typo.body2">
-                Pregled svih životinja evidentiranih u azilu.
-            </MudText>
+<MudGrid Class="mb-4">
+    <MudItem xs="12" sm="4">
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudText Typo="Typo.subtitle2">Ukupno životinja</MudText>
+            <MudText Typo="Typo.h5">@TotalAnimals</MudText>
         </MudPaper>
     </MudItem>
-
-    <MudItem xs="12" md="4">
-        <MudPaper Class="pa-4" Elevation="2">
-            <MudText Typo="Typo.h6">Vrste i pasmine</MudText>
-            <MudText Typo="Typo.body2">
-                Organizacija životinja prema vrstama i pasminama.
-            </MudText>
+    <MudItem xs="12" sm="4">
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudText Typo="Typo.subtitle2">U azilu</MudText>
+            <MudText Typo="Typo.h5">@AnimalsInShelter</MudText>
         </MudPaper>
     </MudItem>
-
-    <MudItem xs="12" md="4">
-        <MudPaper Class="pa-4" Elevation="2">
-            <MudText Typo="Typo.h6">Smještaj</MudText>
-            <MudText Typo="Typo.body2">
-                Pregled bokseva, kaveza i drugih smještajnih jedinica.
-            </MudText> 
+    <MudItem xs="12" sm="4">
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudText Typo="Typo.subtitle2">Udomljene</MudText>
+            <MudText Typo="Typo.h5">@AdoptedAnimals</MudText>
         </MudPaper>
     </MudItem>
 </MudGrid>
 
-<MudPaper Class="pa-4" Elevation="2">
-    <MudText Typo="Typo.h6">Sve životinje</MudText>
-    <MudText Typo="Typo.body2">
-        Pregled svih životinja evidentiranih u azilu.
-    </MudText>
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Class="mb-4">
+    <MudButton OnClick="@ShowAllAnimals">Sve</MudButton>
+    <MudButton OnClick="@ShowAnimalsInShelter">U azilu</MudButton>
+    <MudButton OnClick="@ShowAdoptedAnimals">Udomljene</MudButton>
+</MudButtonGroup>
 
-    <MudButton Variant="Variant.Filled"
-               Color="Color.Primary"
-               Class="mt-3">
-        Otvori pregled
-    </MudButton>
-</MudPaper>
+<MudTable Items="@FilteredAnimals" Hover="true" Striped="true" Bordered="true" Dense="true">
+    <HeaderContent>
+        <MudTh>Slika</MudTh>
+        <MudTh>Ime</MudTh>
+        <MudTh>Vrsta</MudTh>
+        <MudTh>Pasmina</MudTh>
+        <MudTh>Spol</MudTh>
+        <MudTh>Starost</MudTh>
+        <MudTh>Datum dolaska</MudTh>
+        <MudTh>Status</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Slika">
+            <MudAvatar Size="Size.Large">
+                <MudImage Src="@context.ImageUrl" Alt="@context.Name" />
+            </MudAvatar>
+        </MudTd>
+        <MudTd DataLabel="Ime">@context.Name</MudTd>
+        <MudTd DataLabel="Vrsta">@context.Species</MudTd>
+        <MudTd DataLabel="Pasmina">@context.Breed</MudTd>
+        <MudTd DataLabel="Spol">@context.Gender</MudTd>
+        <MudTd DataLabel="Starost">@GetAgeText(context)</MudTd>
+        <MudTd DataLabel="Datum dolaska">@GetArrivalDateText(context)</MudTd>
+        <MudTd DataLabel="Status">
+            <MudChip T="string"
+                     Color="@(context.IsAdopted ? Color.Success : Color.Warning)"
+                     Variant="Variant.Filled">
+                @GetAdoptionStatusText(context)
+            </MudChip>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
 
+@code {
+    private string selectedStatus = "Sve";
+    private List<Animal> animals = new();
 
-<MudPaper Class="pa-4" Elevation="2">
-    <MudImage Src="images/seal.jpg"
-              Alt="Životinje u azilu"
-              Fluid="true"
-              Class="mb-3" />
+    protected override async Task OnInitializedAsync()
+    {
+        List<Animal>? result =
+            await Http.GetFromJsonAsync<List<Animal>>("api/animals");
 
-    <MudText Typo="Typo.h6" Class="d-flex justify-content-center">Housing units</MudText>
-    <MudText Typo="Typo.body2" Class="d-flex justify-content-center">
-        Pregled bokseva, kaveza i drugih smještajnih jedinica
-    </MudText>
+        animals = result ?? new List<Animal>();
+    }
 
-    <MudButton Variant="Variant.Filled"
-               Color="Color.Primary"
-               Class="mt-3 d-block mx-auto">
-        Otvori pregled
-    </MudButton>
-</MudPaper>
+    private int TotalAnimals => animals.Count;
 
-    
+    private int AnimalsInShelter => animals.Count(animal => !animal.IsAdopted);
+
+    private int AdoptedAnimals => animals.Count(animal => animal.IsAdopted);
+
+    private IEnumerable<Animal> FilteredAnimals =>
+        selectedStatus switch
+        {
+            "U azilu" => animals.Where(animal => !animal.IsAdopted),
+            "Udomljene" => animals.Where(animal => animal.IsAdopted),
+            _ => animals
+        };
+
+    private void ShowAllAnimals()
+    {
+        selectedStatus = "Sve";
+    }
+
+    private void ShowAnimalsInShelter()
+    {
+        selectedStatus = "U azilu";
+    }
+
+    private void ShowAdoptedAnimals()
+    {
+        selectedStatus = "Udomljene";
+    }
+
+    private string GetAgeText(Animal animal)
+    {
+        return animal.Age.HasValue
+            ? $"{animal.Age.Value} god."
+            : "Nepoznato";
+    }
+
+    private string GetArrivalDateText(Animal animal)
+    {
+        return animal.ArrivalDate.HasValue
+            ? animal.ArrivalDate.Value.ToShortDateString()
+            : "Nepoznato";
+    }
+
+    private string GetAdoptionStatusText(Animal animal)
+    {
+        return animal.IsAdopted
+            ? "Udomljena"
+            : "U azilu";
+    }
+}

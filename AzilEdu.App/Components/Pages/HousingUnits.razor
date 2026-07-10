@@ -162,7 +162,7 @@
 
     private async Task DeleteHousingUnit(int id)
     {
-        var response = await Http.DeleteAsync($"api/housingunits/{id}");
+        var response = await Http.DeleteAsync($"api/housingunit/{id}");
 
         if (response.IsSuccessStatusCode)
         {

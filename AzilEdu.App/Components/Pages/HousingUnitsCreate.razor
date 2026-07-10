@@ -70,11 +70,11 @@
 
             model.LastCleanedAt = lastCleanedAt;
 
-            var response = await Http.PostAsJsonAsync("api/housingunits", model);
+            var response = await Http.PostAsJsonAsync("api/housingunit", model);
 
             if (response.IsSuccessStatusCode)
             {
-                Navigation.NavigateTo("/housingunits");
+                Navigation.NavigateTo("/housing-units");
                 return;
             }
 

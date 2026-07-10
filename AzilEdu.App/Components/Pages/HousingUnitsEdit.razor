@@ -40,7 +40,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var unit = await Http.GetFromJsonAsync<HousingUnitDto>($"api/housingunits/{Id}");
+        var unit = await Http.GetFromJsonAsync<HousingUnitDto>($"api/housingunit/{Id}");
 
         if (unit is not null)
         {
@@ -74,11 +74,11 @@
 
         model.LastCleanedAt = lastCleanedAt;
 
-        var response = await Http.PutAsJsonAsync($"api/housingunits/{Id}", model);
+        var response = await Http.PutAsJsonAsync($"api/housingunit/{Id}", model);
 
         if (response.IsSuccessStatusCode)
         {
-            Navigation.NavigateTo("/housingunits");
+            Navigation.NavigateTo("/housing-units");
         }
     }
 }

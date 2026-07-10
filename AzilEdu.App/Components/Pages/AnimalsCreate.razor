@@ -46,7 +46,6 @@
 @code {
     private string? statusMessage;
     private string? errorMessage;
-    private int saveClickCount;
 
     private SaveAnimalDto model = new()
     {
@@ -60,8 +59,6 @@
     {
         try
         {
-            saveClickCount++;
-            statusMessage = $"Klik na spremanje je primljen ({saveClickCount}).";
             errorMessage = null;
 
             if (string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.Species))

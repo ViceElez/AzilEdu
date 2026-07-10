@@ -9,6 +9,10 @@
     Prikazujemo smještajne jedinice koje dolaze iz SQLite baze preko API projekta.
 </MudText>
 
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/housingunits/create" Class="mb-4">
+    Nova smještajna jedinica
+</MudButton>
+
 <MudGrid Class="mt-4" style="display: flex; align-items: stretch;"> 
     <MudItem xs="12" md="3" style="display: flex;">
         <MudPaper Class="pa-4 h-100" Elevation="2">
@@ -60,6 +64,7 @@
         <MudTh>Slobodno</MudTh>
         <MudTh>Zadnje čišćenje</MudTh>
         <MudTh>Status</MudTh>
+        <MudTh>Akcije</MudTh>
     </HeaderContent>
 
     <RowTemplate>
@@ -80,6 +85,14 @@
                      Variant="Variant.Filled">
                 @GetHousingUnitStatusText(context)
             </MudChip>
+        </MudTd>
+        <MudTd>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/housingunits/edit/{context.Id}")">
+                Uredi
+            </MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@(() => DeleteHousingUnit(context.Id))">
+                Obriši
+            </MudButton>
         </MudTd>
     </RowTemplate>
 </MudTable>
@@ -147,4 +160,13 @@
         return unit.IsActive ? Color.Success : Color.Warning;
     }
 
+    private async Task DeleteHousingUnit(int id)
+    {
+        var response = await Http.DeleteAsync($"api/housingunits/{id}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            Housings = Housings.Where(h => h.Id != id).ToList();
+        }
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using AzilEdu.Api.Data;
 using AzilEdu.Shared.Models;
+using AzilEdu.Shared.Models.HousingUnits;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

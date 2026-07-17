@@ -1,7 +1,6 @@
 ﻿using AzilEdu.Api.Data;
-using AzilEdu.Shared.DTOs;
 using AzilEdu.Shared.DTOs.Animals;
-using AzilEdu.Shared.Models;
+using AzilEdu.Shared.Models.Animals;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,21 +21,23 @@ public class AnimalsController : ControllerBase
     public async Task<ActionResult<List<AnimalDto>>> GetAnimals()
     {
         var animals = await _context.Animals
-        .OrderBy(a => a.Name)
-        .Select(a => new AnimalDto
-        {
-            Id = a.Id,
-            Name = a.Name,
-            Species = a.Species,
-            Breed = a.Breed,
-            Gender = a.Gender,
-            Age = a.Age,
-            ArrivalDate = a.ArrivalDate,
-            IsAdopted = a.IsAdopted,
-            ImageUrl = a.ImageUrl,
-            Description = a.Description
-        })
-        .ToListAsync();
+            .Include(animal => animal.AnimalStatus)
+            .OrderBy(animal => animal.Name)
+            .Select(animal => new AnimalDto
+            {
+                Id = animal.Id,
+                Name = animal.Name,
+                Species = animal.Species,
+                Breed = animal.Breed,
+                Gender = animal.Gender,
+                Age = animal.Age,
+                ArrivalDate = animal.ArrivalDate,
+                AnimalStatusId = animal.AnimalStatusId,
+                Status = animal.AnimalStatus != null ? animal.AnimalStatus.Name : string.Empty,
+                ImageUrl = animal.ImageUrl,
+                Description = animal.Description
+            })
+            .ToListAsync();
 
         return Ok(animals);
     }
@@ -44,8 +45,10 @@ public class AnimalsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<AnimalDto>> GetAnimalById(int id)
     {
-        var animal=await _context.Animals.FindAsync(id);
-        if(animal==null)
+        var animal = await _context.Animals
+            .Include(animal => animal.AnimalStatus)
+            .FirstOrDefaultAsync(animal => animal.Id == id);
+        if (animal==null)
             return NotFound();
 
         var dto = new AnimalDto
@@ -57,7 +60,7 @@ public class AnimalsController : ControllerBase
             Gender = animal.Gender,
             Age = animal.Age,
             ArrivalDate = animal.ArrivalDate,
-            IsAdopted = animal.IsAdopted,
+            AnimalStatusId = animal.AnimalStatusId,
             ImageUrl = animal.ImageUrl,
             Description = animal.Description
         };
@@ -75,7 +78,7 @@ public class AnimalsController : ControllerBase
             Gender = dto.Gender,
             Age = dto.Age,
             ArrivalDate = dto.ArrivalDate,
-            IsAdopted = dto.IsAdopted,
+            AnimalStatusId = dto.AnimalStatusId,
             ImageUrl = dto.ImageUrl,
             Description = dto.Description
         };
@@ -92,7 +95,7 @@ public class AnimalsController : ControllerBase
             Gender = animal.Gender,
             Age = animal.Age,
             ArrivalDate = animal.ArrivalDate,
-            IsAdopted = animal.IsAdopted,
+            AnimalStatusId = dto.AnimalStatusId,
             ImageUrl = animal.ImageUrl,
             Description = animal.Description
         };
@@ -114,7 +117,7 @@ public class AnimalsController : ControllerBase
         animal.Gender = dto.Gender;
         animal.Age = dto.Age;
         animal.ArrivalDate = dto.ArrivalDate;
-        animal.IsAdopted = dto.IsAdopted;
+        animal.AnimalStatusId = dto.AnimalStatusId; 
         animal.ImageUrl = dto.ImageUrl;
         animal.Description = dto.Description;
 

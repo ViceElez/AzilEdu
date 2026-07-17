@@ -31,7 +31,16 @@
     <MudTextField @bind-Value="model.Gender" Label="Spol" Immediate="true" />
     <MudNumericField @bind-Value="model.Age" Label="Dob" />
     <MudDatePicker @bind-Date="arrivalDate" Label="Datum dolaska" />
-    <MudCheckBox @bind-Value="model.IsAdopted" Label="Udomljena" />
+    <MudSelect T="int"
+               Label="Status"
+               @bind-Value="model.AnimalStatusId"
+               Variant="Variant.Outlined"
+               Required="true">
+        @foreach (var status in statusList)
+        {
+            <MudSelectItem Value="@status.Id">@status.Name</MudSelectItem>
+        }
+    </MudSelect>
     <MudTextField @bind-Value="model.ImageUrl" Label="Putanja slike" Immediate="true" />
     <MudTextField @bind-Value="model.Description" Label="Opis" Lines="3" Immediate="true" />
 
@@ -46,6 +55,7 @@
 @code {
     private string? statusMessage;
     private string? errorMessage;
+    private List<LookupDto> statusList = new();
 
     private SaveAnimalDto model = new()
     {
@@ -54,6 +64,17 @@
     };
 
     private DateTime? arrivalDate = DateTime.Today;
+
+    protected override async Task OnInitializedAsync()
+    {
+        statusList = await Http.GetFromJsonAsync<List<LookupDto>>("api/animalstatuses") ?? new();
+
+        if (model.AnimalStatusId == 0 && statusList.Count > 0)
+        {
+            model.AnimalStatusId = statusList[0].Id;
+        }
+    }
+
 
     private async Task SaveAnimal()
     {

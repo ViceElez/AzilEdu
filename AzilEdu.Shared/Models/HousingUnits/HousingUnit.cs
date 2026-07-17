@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AzilEdu.Shared.Models
+namespace AzilEdu.Shared.Models.HousingUnits
 {
     public class HousingUnit
     {

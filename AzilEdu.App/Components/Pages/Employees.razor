@@ -1,6 +1,68 @@
 ﻿@page "/employees"
+@rendermode InteractiveServer
+@using AzilEdu.Shared.DTOs.Employees
+@using System.Net.Http.Json
+@inject HttpClient Http
 
-<MudText Typo="Typo.h4" GutterBottom="true">Djelatnici</MudText>
-<MudText Typo="Typo.body1">
-    Ovdje ćemo kasnije pratiti djelatnike i administrativne ovlasti.
+<MudText Typo="Typo.h4" GutterBottom="true">Zaposlenici</MudText>
+<MudText Typo="Typo.body1" Class="mb-4">
+    Na ovoj stranici prikazujemo zaposlenike koji dolaze iz baze preko API-ja i DTO objekata.
 </MudText>
+
+<MudTable Items="@employees"
+          Hover="true"
+          Striped="true"
+          Bordered="true"
+          Dense="true">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<EmployeeDto, object>(x => x.FirstName)">Ime</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<EmployeeDto, object>(x => x.LastName)">Prezime</MudTableSortLabel></MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>Telefon</MudTh>
+        <MudTh>Broj zaposlenika</MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<EmployeeDto, object>(x => x.HireDate)">Datum zapošljavanja</MudTableSortLabel></MudTh>
+        <MudTh>Pozicija</MudTh>
+        <MudTh>Status</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Ime">@context.FirstName</MudTd>
+        <MudTd DataLabel="Prezime">@context.LastName</MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="Telefon">@context.PhoneNumber</MudTd>
+        <MudTd DataLabel="Broj zaposlenika">@context.EmployeeNumber</MudTd>
+        <MudTd DataLabel="Datum zapošljavanja">@context.HireDate.ToShortDateString()</MudTd>
+        <MudTd DataLabel="Pozicija">@context.PositionName</MudTd>
+        <MudTd DataLabel="Status">
+            <MudChip T="string" Color="@GetStatusColor(context.StatusName)">
+                @context.StatusName
+            </MudChip>
+        </MudTd>
+    </RowTemplate>
+
+    <NoRecordsContent>
+        <MudText Typo="Typo.body1" Class="pa-4">
+            Nema podataka za prikaz.
+        </MudText>
+    </NoRecordsContent>
+</MudTable>
+
+@code {
+    private List<EmployeeDto> employees = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        employees = await Http.GetFromJsonAsync<List<EmployeeDto>>("api/employees") ?? new();
+    }
+
+    private Color GetStatusColor(string status)
+    {
+        return status switch
+        {
+            "Aktivan" => Color.Success,
+            "Na bolovanju" => Color.Warning,
+            "Neaktivan" => Color.Default,
+            _ => Color.Default
+        };
+    }
+}

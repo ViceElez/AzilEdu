@@ -2,6 +2,9 @@ using AzilEdu.Api.Data;
 using AzilEdu.Shared.Models.HousingUnits;
 using Microsoft.EntityFrameworkCore;
 using AzilEdu.Shared.Models.Animals;
+using AzilEdu.Shared.Models.Volunteers;
+using AzilEdu.Shared.Models.Employees;
+using AzilEdu.Shared.Models.Donors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -236,6 +239,171 @@ using (var scope = app.Services.CreateScope())
             }
         );
 
+        await db.SaveChangesAsync();
+    }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AzilEduDbContext>();
+
+    await db.Database.MigrateAsync();
+
+    if (!await db.Volunteers.AnyAsync())
+    {
+        db.Volunteers.AddRange(
+            new Volunteers
+            {
+                FirstName = "Ivan",
+                LastName = "Horvat",
+                Email = "ivan.horvat@example.com",
+                PhoneNumber = "0912345678",
+                Skills = "Šetnja pasa, čišćenje",
+                AvailableFrom = "Ponedjeljak, Srijeda",
+                Notes = "Iskusan s velikim psima",
+                VolunteerStatusId = 1
+            },
+            new Volunteers
+            {
+                FirstName = "Ana",
+                LastName = "Kovač",
+                Email = "ana.kovac@example.com",
+                PhoneNumber = "0987654321",
+                Skills = "Rad s mačkama",
+                AvailableFrom = "Vikendom",
+                Notes = "Nova volonterka",
+                VolunteerStatusId = 2
+            },
+            new Volunteers
+            {
+                FirstName = "Marko",
+                LastName = "Novak",
+                Email = "marko.novak@example.com",
+                PhoneNumber = "0951122334",
+                Skills = "Prijevoz, održavanje",
+                AvailableFrom = "Fleksibilno",
+                Notes = "Ima kombi",
+                VolunteerStatusId = 3
+            },
+            new Volunteers
+            {
+                FirstName = "Petra",
+                LastName = "Jurić",
+                Email = "petra.juric@example.com",
+                PhoneNumber = "0998877665",
+                Skills = "Administracija",
+                AvailableFrom = "Radnim danom prijepodne",
+                Notes = "Pomaže na mrežama",
+                VolunteerStatusId = 4
+            }
+        );
+
+        await db.SaveChangesAsync();
+    }
+}
+
+using(var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AzilEduDbContext>();
+
+    await db.Database.MigrateAsync();
+
+    if (!await db.Employees.AnyAsync())
+    {
+        db.Employees.AddRange(
+            new Employees
+            {
+                FirstName = "Luka",
+                LastName = "Babić",
+                Email = "luka.babic@example.com",
+                PhoneNumber = "0911122334",
+                EmployeeNumber = 1001,
+                HireDate = new DateTime(2022, 5, 10),
+                Notes = "Voditelj skloništa",
+                EmployeePositionId = 1,
+                EmployeeStatusId = 1
+            },
+            new Employees
+            {
+                FirstName = "Maja",
+                LastName = "Knez",
+                Email = "maja.knez@example.com",
+                PhoneNumber = "0982233445",
+                EmployeeNumber = 1002,
+                HireDate = new DateTime(2023, 8, 15),
+                Notes = "Veterinarski tehničar",
+                EmployeePositionId = 2,
+                EmployeeStatusId = 1
+            },
+            new Employees
+            {
+                FirstName = "Stjepan",
+                LastName = "Radić",
+                Email = "stjepan.radic@example.com",
+                PhoneNumber = "0953344556",
+                EmployeeNumber = 1003,
+                HireDate = new DateTime(2024, 1, 20),
+                Notes = "Tim za udomljavanje",
+                EmployeePositionId = 3,
+                EmployeeStatusId = 2
+            }
+        );
+        await db.SaveChangesAsync();
+    }
+}
+
+using(var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AzilEduDbContext>();
+
+    await db.Database.MigrateAsync();
+
+    if (!await db.Donors.AnyAsync())
+    {
+        db.Donors.AddRange(
+            new Donors
+            {
+                FirstName = "Ivana",
+                LastName = "Matić",
+                OrganizationName = "",
+                Email = "ivana.matic@example.com",
+                PhoneNumber = "0915566778",
+                Address = "Ilica 10",
+                City = "Zagreb",
+                Note = "Redoviti donator hrane",
+                CreatedAt = DateTime.UtcNow.AddMonths(-5),
+                DonorTypeId = 1,
+                DonorStatusId = 1
+            },
+            new Donors
+            {
+                FirstName = "Josip",
+                LastName = "Vuković",
+                OrganizationName = "PetShop HR",
+                Email = "kontakt@petshop.hr",
+                PhoneNumber = "012345678",
+                Address = "Vukovarska 20",
+                City = "Split",
+                Note = "Donacija opreme",
+                CreatedAt = DateTime.UtcNow.AddYears(-1),
+                DonorTypeId = 2,
+                DonorStatusId = 1
+            },
+            new Donors
+            {
+                FirstName = "Katarina",
+                LastName = "Lovrić",
+                OrganizationName = "",
+                Email = "katarina.lovric@example.com",
+                PhoneNumber = "0998877665",
+                Address = "Zagrebačka 5",
+                City = "Rijeka",
+                Note = "Jednokratna financijska donacija",
+                CreatedAt = DateTime.UtcNow.AddDays(-10),
+                DonorTypeId = 1,
+                DonorStatusId = 2
+            }
+        );
         await db.SaveChangesAsync();
     }
 }

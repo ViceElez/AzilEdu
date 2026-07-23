@@ -3,6 +3,7 @@ using System;
 using AzilEdu.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AzilEdu.Api.Migrations
 {
     [DbContext(typeof(AzilEduDbContext))]
-    partial class AzilEduDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260723145954_AddPeopleModules")]
+    partial class AddPeopleModules
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
@@ -237,29 +240,7 @@ namespace AzilEdu.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EmployeePositions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Djelatnik azila"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Veterinar"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Koordinator volontera"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Administrator"
-                        });
+                    b.ToTable("EmployeeTypes");
                 });
 
             modelBuilder.Entity("AzilEdu.Shared.Models.Employees.EmployeeStatus", b =>
@@ -275,23 +256,6 @@ namespace AzilEdu.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EmployeeStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Aktivan"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Na dopustu ili bolovanju"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Neaktivan"
-                        });
                 });
 
             modelBuilder.Entity("AzilEdu.Shared.Models.Employees.Employees", b =>
@@ -496,13 +460,13 @@ namespace AzilEdu.Api.Migrations
                     b.HasOne("AzilEdu.Shared.Models.Employees.EmployeePosition", "EmployeePosition")
                         .WithMany("Employees")
                         .HasForeignKey("EmployeePositionId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AzilEdu.Shared.Models.Employees.EmployeeStatus", "EmployeeStatus")
                         .WithMany("Employees")
                         .HasForeignKey("EmployeeStatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("EmployeePosition");

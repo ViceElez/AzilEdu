@@ -1,6 +1,5 @@
 ﻿using AzilEdu.Api.Data;
 using AzilEdu.Shared.DTOs;
-using AzilEdu.Shared.DTOs.Animals;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

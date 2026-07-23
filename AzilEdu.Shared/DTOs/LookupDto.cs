@@ -1,4 +1,4 @@
-﻿namespace AzilEdu.Shared.DTOs.Animals;
+﻿namespace AzilEdu.Shared.DTOs;
  
 public class LookupDto
 {

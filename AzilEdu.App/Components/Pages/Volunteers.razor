@@ -107,7 +107,7 @@
         volunteers = await Http.GetFromJsonAsync<List<VolunteerDto>>("api/volunteers") ?? new();
         statusList = await Http.GetFromJsonAsync<List<LookupDto>>("api/volunteerstatuses") ?? new();
     }
-
+        
     private bool FilterVolunteers(VolunteerDto volunteer)
     {
         if (!string.IsNullOrWhiteSpace(searchString))

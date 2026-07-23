@@ -7,11 +7,11 @@ namespace AzilEdu.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class VolunteersStatusController : ControllerBase
+    public class VolunteerStatusesController : ControllerBase
     {
         private readonly AzilEduDbContext _context;
 
-        public VolunteersStatusController(AzilEduDbContext context)
+        public VolunteerStatusesController(AzilEduDbContext context)
         {
             _context = context;
         }

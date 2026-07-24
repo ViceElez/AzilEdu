@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using AzilEdu.Api.Data;
+﻿using AzilEdu.Api.Data;
+using AzilEdu.Shared.DTOs;
 using AzilEdu.Shared.DTOs.Employees;
-using Microsoft.EntityFrameworkCore;
 using AzilEdu.Shared.Models.Employees;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AzilEdu.Api.Controllers
 {
@@ -38,6 +39,22 @@ namespace AzilEdu.Api.Controllers
                     PositionName = e.EmployeePosition != null ? e.EmployeePosition.Name : string.Empty,
                     EmployeeStatusId = e.EmployeeStatusId,
                     StatusName = e.EmployeeStatus != null ? e.EmployeeStatus.Name : string.Empty
+                })
+                .ToListAsync();
+
+            return Ok(employees);
+        }
+
+        [HttpGet("lookup")]
+        public async Task<ActionResult<List<LookupDto>>> GetEmployeesLookup()
+        {
+            var employees = await _context.Employees
+                .OrderBy(employee => employee.LastName)
+                .ThenBy(employee => employee.FirstName)
+                .Select(employee => new LookupDto
+                {
+                    Id = employee.Id,
+                    Name = employee.FirstName + " " + employee.LastName
                 })
                 .ToListAsync();
 

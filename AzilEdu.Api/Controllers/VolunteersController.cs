@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using AzilEdu.Api.Data;
+﻿using AzilEdu.Api.Data;
+using AzilEdu.Shared.DTOs;
 using AzilEdu.Shared.DTOs.Volunteers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AzilEdu.Api.Controllers
@@ -36,6 +37,22 @@ namespace AzilEdu.Api.Controllers
                     Status = volunteer.VolunteerStatus != null ? volunteer.VolunteerStatus.Name : string.Empty,
                 })
                 .ToListAsync();
+            return Ok(volunteers);
+        }
+
+        [HttpGet("lookup")]
+        public async Task<ActionResult<List<LookupDto>>> GetVolunteersLookup()
+        {
+            var volunteers = await _context.Volunteers
+                .OrderBy(volunteer => volunteer.LastName)
+                .ThenBy(volunteer => volunteer.FirstName)
+                .Select(volunteer => new LookupDto
+                {
+                    Id = volunteer.Id,
+                    Name = volunteer.FirstName + " " + volunteer.LastName
+                })
+                .ToListAsync();
+
             return Ok(volunteers);
         }
 

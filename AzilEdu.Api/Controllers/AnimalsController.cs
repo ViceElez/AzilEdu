@@ -1,4 +1,5 @@
 ﻿using AzilEdu.Api.Data;
+using AzilEdu.Shared.DTOs;
 using AzilEdu.Shared.DTOs.Animals;
 using AzilEdu.Shared.Models.Animals;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,21 @@ public class AnimalsController : ControllerBase
                 Status = animal.AnimalStatus != null ? animal.AnimalStatus.Name : string.Empty,
                 ImageUrl = animal.ImageUrl,
                 Description = animal.Description
+            })
+            .ToListAsync();
+
+        return Ok(animals);
+    }
+
+    [HttpGet("lookup")]
+    public async Task<ActionResult<List<LookupDto>>> GetAnimalsLookup()
+    {
+        var animals = await _context.Animals
+            .OrderBy(animal => animal.Name)
+            .Select(animal => new LookupDto
+            {
+                Id = animal.Id,
+                Name = animal.Name
             })
             .ToListAsync();
 

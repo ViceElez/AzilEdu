@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using AzilEdu.Api.Data;
+﻿using AzilEdu.Api.Data;
+using AzilEdu.Shared.DTOs;
 using AzilEdu.Shared.DTOs.Donors;
-using Microsoft.EntityFrameworkCore;
 using AzilEdu.Shared.Models.Donors;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace AzilEdu.Api.Controllers
@@ -41,6 +42,25 @@ namespace AzilEdu.Api.Controllers
                     TypeName = d.DonorType != null ? d.DonorType.Name : string.Empty,
                     DonorStatusId = d.DonorStatusId,
                     StatusName = d.DonorStatus != null ? d.DonorStatus.Name : string.Empty
+                })
+                .ToListAsync();
+
+            return Ok(donors);
+        }
+
+        [HttpGet("lookup")]
+        public async Task<ActionResult<List<LookupDto>>> GetDonorsLookup()
+        {
+            var donors = await _context.Donors
+                .OrderBy(donor => donor.OrganizationName)
+                .ThenBy(donor => donor.LastName)
+                .ThenBy(donor => donor.FirstName)
+                .Select(donor => new LookupDto
+                {
+                    Id = donor.Id,
+                    Name = donor.OrganizationName != ""
+                        ? donor.OrganizationName
+                        : donor.FirstName + " " + donor.LastName
                 })
                 .ToListAsync();
 

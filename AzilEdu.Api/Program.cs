@@ -252,7 +252,7 @@ using (var scope = app.Services.CreateScope())
     if (!await db.Volunteers.AnyAsync())
     {
         db.Volunteers.AddRange(
-            new Volunteers
+            new Volunteer
             {
                 FirstName = "Ivan",
                 LastName = "Horvat",
@@ -263,7 +263,7 @@ using (var scope = app.Services.CreateScope())
                 Notes = "Iskusan s velikim psima",
                 VolunteerStatusId = 1
             },
-            new Volunteers
+            new Volunteer
             {
                 FirstName = "Ana",
                 LastName = "Kovač",
@@ -274,7 +274,7 @@ using (var scope = app.Services.CreateScope())
                 Notes = "Nova volonterka",
                 VolunteerStatusId = 2
             },
-            new Volunteers
+            new Volunteer
             {
                 FirstName = "Marko",
                 LastName = "Novak",
@@ -285,7 +285,7 @@ using (var scope = app.Services.CreateScope())
                 Notes = "Ima kombi",
                 VolunteerStatusId = 3
             },
-            new Volunteers
+            new Volunteer
             {
                 FirstName = "Petra",
                 LastName = "Jurić",
@@ -311,7 +311,7 @@ using(var scope = app.Services.CreateScope())
     if (!await db.Employees.AnyAsync())
     {
         db.Employees.AddRange(
-            new Employees
+            new Employee
             {
                 FirstName = "Luka",
                 LastName = "Babić",
@@ -323,7 +323,7 @@ using(var scope = app.Services.CreateScope())
                 EmployeePositionId = 1,
                 EmployeeStatusId = 1
             },
-            new Employees
+            new Employee
             {
                 FirstName = "Maja",
                 LastName = "Knez",
@@ -335,7 +335,7 @@ using(var scope = app.Services.CreateScope())
                 EmployeePositionId = 2,
                 EmployeeStatusId = 1
             },
-            new Employees
+            new Employee
             {
                 FirstName = "Stjepan",
                 LastName = "Radić",
@@ -361,7 +361,7 @@ using(var scope = app.Services.CreateScope())
     if (!await db.Donors.AnyAsync())
     {
         db.Donors.AddRange(
-            new Donors
+            new Donor
             {
                 FirstName = "Ivana",
                 LastName = "Matić",
@@ -375,7 +375,7 @@ using(var scope = app.Services.CreateScope())
                 DonorTypeId = 1,
                 DonorStatusId = 1
             },
-            new Donors
+            new Donor
             {
                 FirstName = "Josip",
                 LastName = "Vuković",
@@ -389,7 +389,7 @@ using(var scope = app.Services.CreateScope())
                 DonorTypeId = 2,
                 DonorStatusId = 1
             },
-            new Donors
+            new Donor
             {
                 FirstName = "Katarina",
                 LastName = "Lovrić",

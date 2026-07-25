@@ -1,0 +1,125 @@
+﻿@page "/donors/create"
+@rendermode InteractiveServer
+@using AzilEdu.Shared.DTOs.Donors
+@using AzilEdu.Shared.DTOs
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" GutterBottom="true">Novi donator</MudText>
+<MudText Typo="Typo.body1" Class="mb-4">
+    Na ovoj stranici unosimo novog donatora i podatke šaljemo prema API-ju preko POST zahtjeva.
+</MudText>
+
+@if (!string.IsNullOrWhiteSpace(statusMessage))
+{
+    <MudAlert Severity="Severity.Info" Class="mb-4">
+        @statusMessage
+    </MudAlert>
+}
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4">
+        @errorMessage
+    </MudAlert>
+}
+
+<MudStack Spacing="2">
+    <MudTextField @bind-Value="model.FirstName" Label="Ime" Required="true" Immediate="true" />
+    <MudTextField @bind-Value="model.LastName" Label="Prezime" Required="true" Immediate="true" />
+    <MudTextField @bind-Value="model.OrganizationName" Label="Organizacija" Immediate="true" />
+    <MudTextField @bind-Value="model.Email" Label="E-mail" Required="true" Immediate="true" />
+    <MudTextField @bind-Value="model.PhoneNumber" Label="Telefon" Immediate="true" />
+    <MudTextField @bind-Value="model.Address" Label="Adresa" Immediate="true" />
+    <MudTextField @bind-Value="model.City" Label="Grad" Immediate="true" />
+
+    <MudSelect T="int"
+               Label="Tip donatora"
+               @bind-Value="model.DonorTypeId"
+               Variant="Variant.Outlined"
+               Required="true">
+        @foreach (var type in typeList)
+        {
+            <MudSelectItem Value="@type.Id">@type.Name</MudSelectItem>
+        }
+    </MudSelect>
+
+    <MudSelect T="int"
+               Label="Status"
+               @bind-Value="model.DonorStatusId"
+               Variant="Variant.Outlined"
+               Required="true">
+        @foreach (var status in statusList)
+        {
+            <MudSelectItem Value="@status.Id">@status.Name</MudSelectItem>
+        }
+    </MudSelect>
+
+    <MudTextField @bind-Value="model.Note" Label="Napomena" Lines="3" Immediate="true" />
+
+    <MudButton ButtonType="ButtonType.Button"
+               OnClick="SaveDonor"
+               Variant="Variant.Filled"
+               Color="Color.Primary">
+        Spremi
+    </MudButton>
+</MudStack>
+
+@code {
+    private string? statusMessage;
+    private string? errorMessage;
+    private List<LookupDto> typeList = new();
+    private List<LookupDto> statusList = new();
+
+    private SaveDonorDto model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        typeList = await Http.GetFromJsonAsync<List<LookupDto>>("api/donortypes") ?? new();
+        statusList = await Http.GetFromJsonAsync<List<LookupDto>>("api/donorstatuses") ?? new();
+
+        if (model.DonorTypeId == 0 && typeList.Count > 0)
+        {
+            model.DonorTypeId = typeList[0].Id;
+        }
+
+        if (model.DonorStatusId == 0 && statusList.Count > 0)
+        {
+            model.DonorStatusId = statusList[0].Id;
+        }
+    }
+
+    private async Task SaveDonor()
+    {
+        try
+        {
+            errorMessage = null;
+
+            if (string.IsNullOrWhiteSpace(model.FirstName) || string.IsNullOrWhiteSpace(model.LastName) || string.IsNullOrWhiteSpace(model.Email))
+            {
+                errorMessage = "Upiši barem obavezna polja: ime, prezime i e-mail.";
+                Snackbar.Add(errorMessage, Severity.Error);
+                return;
+            }
+
+            var response = await Http.PostAsJsonAsync("api/donors", model);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Donator je uspješno kreiran.", Severity.Success);
+                Navigation.NavigateTo("/donors");
+                return;
+            }
+
+            errorMessage = $"Spremanje nije uspjelo. Status: {(int)response.StatusCode}";
+            Snackbar.Add(errorMessage, Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Greška kod spremanja: {ex.Message}";
+            Snackbar.Add(errorMessage, Severity.Error);
+        }
+    }
+}

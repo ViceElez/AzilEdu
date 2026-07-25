@@ -8,6 +8,6 @@ namespace AzilEdu.Shared.Models.Volunteers
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public ICollection<Volunteers> Volunteers { get; set; } = new List<Volunteers>();
+        public ICollection<Volunteer> Volunteers { get; set; } = new List<Volunteer>();
     }
 }

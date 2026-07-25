@@ -1,6 +1,6 @@
 ﻿namespace AzilEdu.Shared.Models.Employees
 {
-    public class Employees
+    public class Employee
     {
         public int Id { get; set; }
         public string FirstName { get; set; }=string.Empty;

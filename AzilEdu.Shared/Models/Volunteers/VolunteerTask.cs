@@ -12,7 +12,7 @@ namespace AzilEdu.Shared.Models.Volunteers
         public string Notes { get; set; } = string.Empty;
 
         public int? VolunteerId { get; set; }
-        public Volunteers? Volunteer { get; set; }
+        public Volunteer? Volunteer { get; set; }
 
         public int? AnimalId { get; set; }
         public Animal? Animal { get; set; }

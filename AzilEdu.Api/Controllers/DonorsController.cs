@@ -4,7 +4,6 @@ using AzilEdu.Shared.DTOs.Donors;
 using AzilEdu.Shared.Models.Donors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace AzilEdu.Api.Controllers
 {
@@ -20,7 +19,7 @@ namespace AzilEdu.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<DonorDto>>> GetDonors()
+        public async Task<ActionResult<List<DonorDto>>> GetDonors([FromQuery] int? statusId, [FromQuery] int? typeId)
         {
             var donors = await _context.Donors
                 .Include(d => d.DonorType)
@@ -44,6 +43,12 @@ namespace AzilEdu.Api.Controllers
                     StatusName = d.DonorStatus != null ? d.DonorStatus.Name : string.Empty
                 })
                 .ToListAsync();
+
+            if (statusId.HasValue)
+                donors = donors.Where(d => d.DonorStatusId == statusId.Value).ToList();
+
+            if (typeId.HasValue)
+                donors = donors.Where(d => d.DonorTypeId == typeId.Value).ToList();
 
             return Ok(donors);
         }
@@ -99,10 +104,11 @@ namespace AzilEdu.Api.Controllers
             return Ok(dto);
         }
 
+
         [HttpPost]
         public async Task<ActionResult<DonorDto>> CreateDonor(SaveDonorDto createDto)
         {
-            var donor = new Donors
+            var donor = new Donor
             {
                 FirstName = createDto.FirstName,
                 LastName = createDto.LastName,

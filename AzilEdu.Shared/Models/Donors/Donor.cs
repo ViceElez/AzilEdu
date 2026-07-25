@@ -1,6 +1,6 @@
 ﻿namespace AzilEdu.Shared.Models.Donors
 {
-    public class Donors
+    public class Donor
     {
         public int Id { get; set; }
         public string FirstName { get; set; }=string.Empty;

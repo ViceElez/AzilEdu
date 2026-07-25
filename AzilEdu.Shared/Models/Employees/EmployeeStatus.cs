@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public ICollection<Employees> Employees { get; set; } = new List<Employees>();
+        public ICollection<Employee> Employees { get; set; } = new List<Employee>();
     }
 }

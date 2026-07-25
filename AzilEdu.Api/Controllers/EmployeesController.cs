@@ -94,7 +94,7 @@ namespace AzilEdu.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<EmployeeDto>> CreateEmployee(SaveEmployeeDto createDto)
         {
-            var employee = new Employees
+            var employee = new Employee
             {
                 FirstName = createDto.FirstName,
                 LastName = createDto.LastName,

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AzilEdu.Shared.Models.Volunteers
 {
-    public class Volunteers
+    public class Volunteer
     {
         public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;

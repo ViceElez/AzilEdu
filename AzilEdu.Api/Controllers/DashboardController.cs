@@ -26,7 +26,17 @@ public class DashboardController : ControllerBase
             ActiveVolunteersCount = await _context.Volunteers.CountAsync(volunteer => volunteer.VolunteerStatusId == 2),
             OpenVolunteerTasksCount = await _context.VolunteerTasks.CountAsync(task => task.VolunteerTaskStatusId == 1),
             ActiveDonorsCount = await _context.Donors.CountAsync(donor => donor.DonorStatusId == 2),
-            EmployeesCount = await _context.Employees.CountAsync()
+            EmployeesCount = await _context.Employees.CountAsync(),
+            DonationsCount = await _context.Donations.CountAsync(),
+            PendingDonationsCount = await _context.Donations.CountAsync(donation => donation.DonationStatusId == 1),
+            MoneyDonationsTotal = await _context.Donations
+                .Where(donation => donation.DonationTypeId == 1)
+                .SumAsync(donation => donation.Amount),
+            EstimatedMaterialDonationsTotal = await _context.Donations
+                .Where(donation => donation.DonationTypeId != 1)
+                .SumAsync(donation => donation.EstimatedValue),
+            OverdueVolunteerTasksCount = await _context.VolunteerTasks
+                .CountAsync(task => task.VolunteerTaskStatusId == 4)
         };
 
         return Ok(summary);

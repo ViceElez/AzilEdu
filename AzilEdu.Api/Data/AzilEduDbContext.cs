@@ -1,5 +1,6 @@
 ﻿using AzilEdu.Shared.Models;
 using AzilEdu.Shared.Models.Animals;
+using AzilEdu.Shared.Models.Donations;
 using AzilEdu.Shared.Models.Donors;
 using AzilEdu.Shared.Models.Employees;
 using AzilEdu.Shared.Models.HousingUnits;
@@ -16,17 +17,20 @@ public class AzilEduDbContext : DbContext
     public DbSet<HousingUnit> HousingUnits { get; set; } = null!;
     public DbSet<Animal> Animals { get; set; } = null!;
     public DbSet<AnimalStatus> AnimalStatuses => Set<AnimalStatus>();
-    public DbSet<Volunteers> Volunteers { get; set; } = null!;
+    public DbSet<Volunteer> Volunteers { get; set; } = null!;
     public DbSet<VolunteerStatus> VolunteerStatuses => Set<VolunteerStatus>();
-    public DbSet<Donors> Donors { get; set; } = null!;
+    public DbSet<Donor> Donors { get; set; } = null!;
     public DbSet<DonorType> DonorTypes => Set<DonorType>();
     public DbSet<DonorStatus> DonorStatuses => Set<DonorStatus>();
-    public DbSet<Employees> Employees { get; set; } = null!;
+    public DbSet<Employee> Employees { get; set; } = null!;
     public DbSet<EmployeeStatus> EmployeeStatuses => Set<EmployeeStatus>();
     public DbSet<EmployeePosition> EmployeePositions => Set<EmployeePosition>();
     public DbSet<VolunteerTask> VolunteerTasks => Set<VolunteerTask>();
     public DbSet<VolunteerTaskStatus> VolunteerTaskStatuses => Set<VolunteerTaskStatus>();
     public DbSet<VolunteerTaskType> VolunteerTaskTypes => Set<VolunteerTaskType>();
+    public DbSet<Donation> Donations { get; set; } = null!;
+    public DbSet<DonationType> DonationTypes => Set<DonationType>();
+    public DbSet<DonationStatus> DonationStatuses => Set<DonationStatus>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,7 +49,7 @@ public class AzilEduDbContext : DbContext
             new AnimalStatus { Id = 4, Name = "Na liječenju" }
         );
 
-        modelBuilder.Entity<Volunteers>()
+        modelBuilder.Entity<Volunteer>()
             .HasOne(volunteer=>volunteer.VolunteerStatus)
             .WithMany(status => status.Volunteers)
             .HasForeignKey(volunteer => volunteer.VolunteerStatusId)
@@ -58,7 +62,7 @@ public class AzilEduDbContext : DbContext
             new VolunteerStatus { Id = 4, Name = "Neaktivan" }
         );
 
-        modelBuilder.Entity<Donors>()
+        modelBuilder.Entity<Donor>()
            .HasOne(donor => donor.DonorType)
            .WithMany(status => status.Donors)
            .HasForeignKey(donor => donor.DonorTypeId)
@@ -70,7 +74,7 @@ public class AzilEduDbContext : DbContext
             new DonorType { Id = 3, Name = "Udruga ili organizacija" }
         );
 
-        modelBuilder.Entity<Donors>()
+        modelBuilder.Entity<Donor>()
             .HasOne(donor => donor.DonorStatus)
             .WithMany(status => status.Donors)
             .HasForeignKey(donor => donor.DonorStatusId)
@@ -83,7 +87,7 @@ public class AzilEduDbContext : DbContext
             new DonorStatus { Id = 4, Name = "Neaktivan" }
         );
 
-        modelBuilder.Entity<Employees>()
+        modelBuilder.Entity<Employee>()
             .HasOne(donor => donor.EmployeePosition)
             .WithMany(status => status.Employees)
             .HasForeignKey(donor => donor.EmployeePositionId)
@@ -96,7 +100,7 @@ public class AzilEduDbContext : DbContext
             new DonorStatus { Id = 4, Name = "Administrator" }
         );
 
-        modelBuilder.Entity<Employees>()
+        modelBuilder.Entity<Employee>()
            .HasOne(donor => donor.EmployeeStatus)
            .WithMany(status => status.Employees)
            .HasForeignKey(donor => donor.EmployeeStatusId)
@@ -148,5 +152,35 @@ public class AzilEduDbContext : DbContext
             new VolunteerTaskType { Id = 5, Name = "Prijevoz" },
             new VolunteerTaskType { Id = 6, Name = "Administracija" }
         );
+
+
+        modelBuilder.Entity<Donation>()
+           .HasOne(donor => donor.DonationType)
+           .WithMany(status => status.Donations)
+           .HasForeignKey(donor => donor.DonationTypeId)
+           .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DonationType>().HasData(
+            new DonationType { Id = 1, Name = "Novčana" },
+            new DonationType { Id = 2, Name = "Hrana" },
+            new DonationType { Id = 3, Name = "Oprema" },
+            new DonationType { Id = 4, Name = "Lijekovi" },
+            new DonationType { Id = 5, Name = "Usluga" }
+        );
+
+       modelBuilder.Entity<Donation>()
+           .HasOne(donor => donor.DonationStatus)
+           .WithMany(status => status.Donations)
+           .HasForeignKey(donor => donor.DonationStatusId)
+           .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DonationStatus>().HasData(
+            new DonationStatus { Id = 1, Name = "Evidentirana" },
+            new DonationStatus { Id = 2, Name = "Potvrđena" },
+            new DonationStatus { Id = 3, Name = "Iskorištena" },
+            new DonationStatus { Id = 4, Name = "Otkazana" }
+        );
+
     }
+
 }

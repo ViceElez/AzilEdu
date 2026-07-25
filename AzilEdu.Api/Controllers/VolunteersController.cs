@@ -84,7 +84,7 @@ namespace AzilEdu.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<VolunteerDto>> CreateVolunteer(SaveVolunteerDto createDto)
         {
-            var volunteer = new Shared.Models.Volunteers.Volunteers
+            var volunteer = new Shared.Models.Volunteers.Volunteer
             {
                 FirstName = createDto.FirstName,
                 LastName = createDto.LastName,

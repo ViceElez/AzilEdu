@@ -34,7 +34,8 @@ else if (summary is null)
 }
 else
 {
-    <MudGrid>
+    <MudText Typo="Typo.h6" Class="mb-3">Životinje i osoblje</MudText>
+    <MudGrid Class="mb-6">
         <MudItem xs="12" sm="6" md="4">
             <MudPaper Class="pa-4" Elevation="2">
                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
@@ -66,6 +67,23 @@ else
         <MudItem xs="12" sm="6" md="4">
             <MudPaper Class="pa-4" Elevation="2">
                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Badge"
+                             Color="Color.Dark"
+                             Size="Size.Large" />
+                    <div>
+                        <MudText Typo="Typo.subtitle2">Djelatnici</MudText>
+                        <MudText Typo="Typo.h4">@summary.EmployeesCount</MudText>
+                    </div>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudText Typo="Typo.h6" Class="mb-3">Volonteri i zadaci</MudText>
+    <MudGrid Class="mb-6">
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                     <MudIcon Icon="@Icons.Material.Filled.VolunteerActivism"
                              Color="Color.Info"
                              Size="Size.Large" />
@@ -94,6 +112,23 @@ else
         <MudItem xs="12" sm="6" md="4">
             <MudPaper Class="pa-4" Elevation="2">
                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.EventBusy"
+                             Color="Color.Error"
+                             Size="Size.Large" />
+                    <div>
+                        <MudText Typo="Typo.subtitle2">Zadaci s isteklim rokom</MudText>
+                        <MudText Typo="Typo.h4">@summary.OverdueVolunteerTasksCount</MudText>
+                    </div>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudText Typo="Typo.h6" Class="mb-3">Donatori i donacije</MudText>
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                     <MudIcon Icon="@Icons.Material.Filled.Payments"
                              Color="Color.Secondary"
                              Size="Size.Large" />
@@ -108,12 +143,54 @@ else
         <MudItem xs="12" sm="6" md="4">
             <MudPaper Class="pa-4" Elevation="2">
                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                    <MudIcon Icon="@Icons.Material.Filled.Badge"
-                             Color="Color.Dark"
+                    <MudIcon Icon="@Icons.Material.Filled.CardGiftcard"
+                             Color="Color.Primary"
                              Size="Size.Large" />
                     <div>
-                        <MudText Typo="Typo.subtitle2">Djelatnici</MudText>
-                        <MudText Typo="Typo.h4">@summary.EmployeesCount</MudText>
+                        <MudText Typo="Typo.subtitle2">Ukupno donacija</MudText>
+                        <MudText Typo="Typo.h4">@summary.DonationsCount</MudText>
+                    </div>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.HourglassEmpty"
+                             Color="Color.Warning"
+                             Size="Size.Large" />
+                    <div>
+                        <MudText Typo="Typo.subtitle2">Donacije na čekanju</MudText>
+                        <MudText Typo="Typo.h4">@summary.PendingDonationsCount</MudText>
+                    </div>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.MonetizationOn"
+                             Color="Color.Success"
+                             Size="Size.Large" />
+                    <div>
+                        <MudText Typo="Typo.subtitle2">Ukupno novčanih donacija</MudText>
+                        <MudText Typo="Typo.h4">@summary.MoneyDonationsTotal.ToString("N2") €</MudText>
+                    </div>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Inventory"
+                             Color="Color.Info"
+                             Size="Size.Large" />
+                    <div>
+                        <MudText Typo="Typo.subtitle2">Procijenjena vrijednost materijalnih donacija</MudText>
+                        <MudText Typo="Typo.h4">@summary.EstimatedMaterialDonationsTotal.ToString("N2") €</MudText>
                     </div>
                 </MudStack>
             </MudPaper>

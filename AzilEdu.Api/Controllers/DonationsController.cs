@@ -19,17 +19,36 @@ namespace AzilEdu.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<DonationDto>>> GetDonations([FromQuery] int? statusId, [FromQuery] int? typeId, [FromQuery] int? donorId)
+        public async Task<ActionResult<List<DonationDto>>> GetDonations(
+            [FromQuery] int? statusId, [FromQuery] int? typeId, [FromQuery] int? donorId)
         {
-            var donations = await _context.Donations
+            var query = _context.Donations
                 .Include(d => d.DonationType)
                 .Include(d => d.DonationStatus)
+                .Include(d => d.Donor)
+                .AsQueryable();
+
+            if (donorId.HasValue)
+                query = query.Where(d => d.DonorId == donorId.Value);
+
+            if (statusId.HasValue)
+                query = query.Where(d => d.DonationStatusId == statusId.Value);
+
+            if (typeId.HasValue)
+                query = query.Where(d => d.DonationTypeId == typeId.Value);
+
+            var donations = await query
                 .Select(d => new DonationDto
                 {
                     Id = d.Id,
                     DonorId = d.DonorId,
+                    DonorName = !string.IsNullOrEmpty(d.Donor.OrganizationName)
+                        ? d.Donor.OrganizationName
+                        : (d.Donor.FirstName + " " + d.Donor.LastName).Trim(),
                     DonationTypeId = d.DonationTypeId,
+                    TypeName = d.DonationType.Name,
                     DonationStatusId = d.DonationStatusId,
+                    StatusName = d.DonationStatus.Name,
                     DonationDate = d.DonationDate,
                     Amount = d.Amount,
                     ItemName = d.ItemName,
@@ -38,15 +57,6 @@ namespace AzilEdu.Api.Controllers
                     Notes = d.Notes
                 })
                 .ToListAsync();
-
-            if (donorId.HasValue)
-                donations = donations.Where(d => d.DonorId == donorId.Value).ToList();
-
-            if (statusId.HasValue)
-                donations = donations.Where(d => d.DonationStatusId == statusId.Value).ToList();
-
-            if (typeId.HasValue)
-                donations = donations.Where(d => d.DonationTypeId == typeId.Value).ToList();
 
             return Ok(donations);
         }

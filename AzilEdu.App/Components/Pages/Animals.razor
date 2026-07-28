@@ -105,6 +105,10 @@
             <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@(() => DeleteAnimal(context.Id))">
                 Obriši
             </MudButton>
+            <MudIconButton Icon="@Icons.Material.Filled.AccountCircle"
+                           Color="Color.Primary"
+                           Href="@($"/animals/{context.Id}")"
+                           title="Otvori profil" />
         </MudTd>
     </RowTemplate>
 

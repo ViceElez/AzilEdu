@@ -3,6 +3,7 @@ using System;
 using AzilEdu.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AzilEdu.Api.Migrations
 {
     [DbContext(typeof(AzilEduDbContext))]
-    partial class AzilEduDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260727155726_ChangeDonors")]
+    partial class ChangeDonors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
@@ -98,67 +101,6 @@ namespace AzilEdu.Api.Migrations
                     b.HasIndex("AnimalStatusId");
 
                     b.ToTable("Animals");
-                });
-
-            modelBuilder.Entity("AzilEdu.Shared.Models.Animals.AnimalMedia", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AnimalId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Caption")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsCover")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MediaType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("OriginalFileName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("StoredFileName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnimalId");
-
-                    b.ToTable("AnimalMedia");
-                });
-
-            modelBuilder.Entity("AzilEdu.Shared.Models.AppUserRole", b =>
-                {
-                    b.Property<int>("AppUserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AppRoleId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AppUserId", "AppRoleId");
-
-                    b.HasIndex("AppRoleId");
-
-                    b.ToTable("AppUserRoles");
                 });
 
             modelBuilder.Entity("AzilEdu.Shared.Models.Donations.Donation", b =>
@@ -566,101 +508,6 @@ namespace AzilEdu.Api.Migrations
                     b.ToTable("HousingUnits");
                 });
 
-            modelBuilder.Entity("AzilEdu.Shared.Models.Users.AppRole", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DisplayName = "Korisnik",
-                            Name = "User"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            DisplayName = "Administrator",
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            DisplayName = "Djelatnik",
-                            Name = "Employee"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            DisplayName = "Volonter",
-                            Name = "Volunteer"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            DisplayName = "Donator",
-                            Name = "Donor"
-                        });
-                });
-
-            modelBuilder.Entity("AzilEdu.Shared.Models.Users.AppUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("DonorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("EmployeeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("VolunteerId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DonorId");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("VolunteerId");
-
-                    b.ToTable("AppUsers");
-                });
-
             modelBuilder.Entity("AzilEdu.Shared.Models.Volunteers.Volunteer", b =>
                 {
                     b.Property<int>("Id")
@@ -891,36 +738,6 @@ namespace AzilEdu.Api.Migrations
                     b.Navigation("AnimalStatus");
                 });
 
-            modelBuilder.Entity("AzilEdu.Shared.Models.Animals.AnimalMedia", b =>
-                {
-                    b.HasOne("AzilEdu.Shared.Models.Animals.Animal", "Animal")
-                        .WithMany("Media")
-                        .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Animal");
-                });
-
-            modelBuilder.Entity("AzilEdu.Shared.Models.AppUserRole", b =>
-                {
-                    b.HasOne("AzilEdu.Shared.Models.Users.AppRole", "AppRole")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("AppRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AzilEdu.Shared.Models.Users.AppUser", "AppUser")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppRole");
-
-                    b.Navigation("AppUser");
-                });
-
             modelBuilder.Entity("AzilEdu.Shared.Models.Donations.Donation", b =>
                 {
                     b.HasOne("AzilEdu.Shared.Models.Donations.DonationStatus", "DonationStatus")
@@ -986,30 +803,6 @@ namespace AzilEdu.Api.Migrations
                     b.Navigation("EmployeeStatus");
                 });
 
-            modelBuilder.Entity("AzilEdu.Shared.Models.Users.AppUser", b =>
-                {
-                    b.HasOne("AzilEdu.Shared.Models.Donors.Donor", "Donor")
-                        .WithMany()
-                        .HasForeignKey("DonorId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("AzilEdu.Shared.Models.Employees.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("AzilEdu.Shared.Models.Volunteers.Volunteer", "Volunteer")
-                        .WithMany()
-                        .HasForeignKey("VolunteerId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Donor");
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Volunteer");
-                });
-
             modelBuilder.Entity("AzilEdu.Shared.Models.Volunteers.Volunteer", b =>
                 {
                     b.HasOne("AzilEdu.Shared.Models.Volunteers.VolunteerStatus", "VolunteerStatus")
@@ -1059,11 +852,6 @@ namespace AzilEdu.Api.Migrations
                     b.Navigation("Animals");
                 });
 
-            modelBuilder.Entity("AzilEdu.Shared.Models.Animals.Animal", b =>
-                {
-                    b.Navigation("Media");
-                });
-
             modelBuilder.Entity("AzilEdu.Shared.Models.Donations.DonationStatus", b =>
                 {
                     b.Navigation("Donations");
@@ -1097,16 +885,6 @@ namespace AzilEdu.Api.Migrations
             modelBuilder.Entity("AzilEdu.Shared.Models.Employees.EmployeeStatus", b =>
                 {
                     b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("AzilEdu.Shared.Models.Users.AppRole", b =>
-                {
-                    b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("AzilEdu.Shared.Models.Users.AppUser", b =>
-                {
-                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("AzilEdu.Shared.Models.Volunteers.VolunteerStatus", b =>

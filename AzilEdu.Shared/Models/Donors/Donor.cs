@@ -1,4 +1,6 @@
-﻿namespace AzilEdu.Shared.Models.Donors
+﻿using AzilEdu.Shared.Models.Donations;
+
+namespace AzilEdu.Shared.Models.Donors
 {
     public class Donor
     {
@@ -16,5 +18,6 @@
         public DonorType DonorType { get; set; } = null!;
         public int DonorStatusId { get; set; }
         public DonorStatus DonorStatus { get; set; } = null!;
+        public ICollection<Donation> Donations { get; set; } = new List<Donation>();
     }
 }

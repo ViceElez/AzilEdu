@@ -29,138 +29,129 @@ using (var scope = app.Services.CreateScope())
     if (!await db.HousingUnits.AnyAsync())
     {
         db.HousingUnits.AddRange(
-         new HousingUnit
-         {
-             Name = "Box 1",
-             UnitType = "Boks za pse",
-             Capacity = 4,
-             Occupied = 2,
-             LastCleanedAt = DateTime.Now.AddDays(-2),
-             IsActive = true,
-             ImageUrl = "/images/housing-units/box-1.webp",
-             Note = "Dva psa trenutno"
-         },
-         new HousingUnit
-         {
-             Name = "Box 2",
-             UnitType = "Boks za pse",
-             Capacity = 6,
-             Occupied = 6,
-             LastCleanedAt = DateTime.Now.AddDays(-1),
-             IsActive = true,
-             ImageUrl = "/images/housing-units/box-2.webp",
-             Note = "Puna jedinica"
-         },
-         new HousingUnit
-         {
-             Name = "Prostor za mačke",
-             UnitType = "Prostor za mačke",
-             Capacity = 8,
-             Occupied = 3,
-             LastCleanedAt = DateTime.Now.AddHours(-6),
-             IsActive = true,
-             ImageUrl = "/images/housing-units/macke-prostor.webp",
-             Note = "Prostor s platformama"
-         },
-         new HousingUnit
-         {
-             Name = "Karantena 1",
-             UnitType = "Karantena",
-             Capacity = 2,
-             Occupied = 1,
-             LastCleanedAt = DateTime.Now,
-             IsActive = true,
-             ImageUrl = "/images/housing-units/karantena.webp",
-             Note = "Izolirani prostor"
-         },
-         new HousingUnit
-         {
-             Name = "Box 3",
-             UnitType = "Boks za pse",
-             Capacity = 5,
-             Occupied = 0,
-             LastCleanedAt = DateTime.Now.AddMonths(-1),
-             IsActive = false,
-             ImageUrl = "/images/housing-units/box-3.webp",
-             Note = "Trenutno nije u upotrebi"
-         },
-         new HousingUnit
-         {
-             Name = "Privremeni prostor",
-             UnitType = "Boks za pse",
-             Capacity = 3,
-             Occupied = 1,
-             LastCleanedAt = null,
-             IsActive = true,
-             ImageUrl = "/images/housing-units/privremeni.webp",
-             Note = "Nema podatka o čišćenju"
-         },
-         new HousingUnit
-         {
-             Name = "Box 4",
-             UnitType = "Boks za pse",
-             Capacity = 4,
-             Occupied = 4,
-             LastCleanedAt = DateTime.Now.AddHours(-12),
-             IsActive = true,
-             ImageUrl = "/images/housing-units/box-4.webp",
-             Note = "Na kapacitetu"
-         },
-         new HousingUnit
-         {
-             Name = "Box 5",
-             UnitType = "Boks za pse",
-             Capacity = 5,
-             Occupied = 1,
-             LastCleanedAt = DateTime.Now.AddDays(-3),
-             IsActive = true,
-             ImageUrl = "/images/housing-units/box-5.webp",
-             Note = "Slobodno 4 mjesta"
-         },
-         new HousingUnit
-         {
-             Name = "Prostor za nove životinje",
-             UnitType = "Prostor za mačke",
-             Capacity = 6,
-             Occupied = 2,
-             LastCleanedAt = DateTime.Now.AddDays(-1),
-             IsActive = true,
-             ImageUrl = "/images/housing-units/novi-prostor.webp",
-             Note = "Prostor za nove dolaske"
-         },
-         new HousingUnit
-         {
-             Name = "Box za promatranje",
-             UnitType = "Boks za pse",
-             Capacity = 2,
-             Occupied = 0,
-             LastCleanedAt = DateTime.Now.AddHours(-2),
-             IsActive = true,
-             ImageUrl = "/images/housing-units/opservacija.webp",
-             Note = "Rezervan za nove pse"
-         },
-         new HousingUnit
-         {
-             Name = "Karantena 2",
-             UnitType = "Karantena",
-             Capacity = 3,
-             Occupied = 2,
-             LastCleanedAt = null,
-             IsActive = true,
-             ImageUrl = "/images/housing-units/karantena-2.webp",
-             Note = "Sekundarna karantena"
-         }
+            new HousingUnit
+            {
+                Name = "Box 1",
+                UnitType = "Boks za pse",
+                Capacity = 4,
+                Occupied = 2,
+                LastCleanedAt = DateTime.Now.AddDays(-2),
+                IsActive = true,
+                ImageUrl = "/images/housing-units/box-1.webp",
+                Note = "Dva psa trenutno"
+            },
+            new HousingUnit
+            {
+                Name = "Box 2",
+                UnitType = "Boks za pse",
+                Capacity = 6,
+                Occupied = 6,
+                LastCleanedAt = DateTime.Now.AddDays(-1),
+                IsActive = true,
+                ImageUrl = "/images/housing-units/box-2.webp",
+                Note = "Puna jedinica"
+            },
+            new HousingUnit
+            {
+                Name = "Prostor za mačke",
+                UnitType = "Prostor za mačke",
+                Capacity = 8,
+                Occupied = 3,
+                LastCleanedAt = DateTime.Now.AddHours(-6),
+                IsActive = true,
+                ImageUrl = "/images/housing-units/macke-prostor.webp",
+                Note = "Prostor s platformama"
+            },
+            new HousingUnit
+            {
+                Name = "Karantena 1",
+                UnitType = "Karantena",
+                Capacity = 2,
+                Occupied = 1,
+                LastCleanedAt = DateTime.Now,
+                IsActive = true,
+                ImageUrl = "/images/housing-units/karantena.webp",
+                Note = "Izolirani prostor"
+            },
+            new HousingUnit
+            {
+                Name = "Box 3",
+                UnitType = "Boks za pse",
+                Capacity = 5,
+                Occupied = 0,
+                LastCleanedAt = DateTime.Now.AddMonths(-1),
+                IsActive = false,
+                ImageUrl = "/images/housing-units/box-3.webp",
+                Note = "Trenutno nije u upotrebi"
+            },
+            new HousingUnit
+            {
+                Name = "Privremeni prostor",
+                UnitType = "Boks za pse",
+                Capacity = 3,
+                Occupied = 1,
+                LastCleanedAt = null,
+                IsActive = true,
+                ImageUrl = "/images/housing-units/privremeni.webp",
+                Note = "Nema podatka o čišćenju"
+            },
+            new HousingUnit
+            {
+                Name = "Box 4",
+                UnitType = "Boks za pse",
+                Capacity = 4,
+                Occupied = 4,
+                LastCleanedAt = DateTime.Now.AddHours(-12),
+                IsActive = true,
+                ImageUrl = "/images/housing-units/box-4.webp",
+                Note = "Na kapacitetu"
+            },
+            new HousingUnit
+            {
+                Name = "Box 5",
+                UnitType = "Boks za pse",
+                Capacity = 5,
+                Occupied = 1,
+                LastCleanedAt = DateTime.Now.AddDays(-3),
+                IsActive = true,
+                ImageUrl = "/images/housing-units/box-5.webp",
+                Note = "Slobodno 4 mjesta"
+            },
+            new HousingUnit
+            {
+                Name = "Prostor za nove životinje",
+                UnitType = "Prostor za mačke",
+                Capacity = 6,
+                Occupied = 2,
+                LastCleanedAt = DateTime.Now.AddDays(-1),
+                IsActive = true,
+                ImageUrl = "/images/housing-units/novi-prostor.webp",
+                Note = "Prostor za nove dolaske"
+            },
+            new HousingUnit
+            {
+                Name = "Box za promatranje",
+                UnitType = "Boks za pse",
+                Capacity = 2,
+                Occupied = 0,
+                LastCleanedAt = DateTime.Now.AddHours(-2),
+                IsActive = true,
+                ImageUrl = "/images/housing-units/opservacija.webp",
+                Note = "Rezervan za nove pse"
+            },
+            new HousingUnit
+            {
+                Name = "Karantena 2",
+                UnitType = "Karantena",
+                Capacity = 3,
+                Occupied = 2,
+                LastCleanedAt = null,
+                IsActive = true,
+                ImageUrl = "/images/housing-units/karantena-2.webp",
+                Note = "Sekundarna karantena"
+            }
         );
-
-        await db.SaveChangesAsync();
     }
-}
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AzilEduDbContext>();
-
-    await db.Database.MigrateAsync();
 
     if (!await db.Animals.AnyAsync())
     {
@@ -238,16 +229,7 @@ using (var scope = app.Services.CreateScope())
                 Description = "Udomljen pas koji ostaje u evidenciji azila."
             }
         );
-
-        await db.SaveChangesAsync();
     }
-}
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AzilEduDbContext>();
-
-    await db.Database.MigrateAsync();
 
     if (!await db.Volunteers.AnyAsync())
     {
@@ -297,16 +279,7 @@ using (var scope = app.Services.CreateScope())
                 VolunteerStatusId = 4
             }
         );
-
-        await db.SaveChangesAsync();
     }
-}
-
-using(var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AzilEduDbContext>();
-
-    await db.Database.MigrateAsync();
 
     if (!await db.Employees.AnyAsync())
     {
@@ -348,15 +321,7 @@ using(var scope = app.Services.CreateScope())
                 EmployeeStatusId = 2
             }
         );
-        await db.SaveChangesAsync();
     }
-}
-
-using(var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AzilEduDbContext>();
-
-    await db.Database.MigrateAsync();
 
     if (!await db.Donors.AnyAsync())
     {
@@ -404,8 +369,12 @@ using(var scope = app.Services.CreateScope())
                 DonorStatusId = 2
             }
         );
-        await db.SaveChangesAsync();
     }
+
+    await db.SaveChangesAsync();
+
+    await db.SaveChangesAsync();
+    await AppUserSeeder.SeedAsync(db);
 }
 
 // Configure the HTTP request pipeline.
@@ -415,6 +384,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

@@ -1,5 +1,6 @@
 using AzilEdu.App.Components;
 using MudBlazor.Services;
+using AzilEdu.App.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ builder.Services.AddScoped(sp => new HttpClient
 {
     BaseAddress = new Uri("https://localhost:7059/")
 });
+
+builder.Services.AddScoped<CurrentUserService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

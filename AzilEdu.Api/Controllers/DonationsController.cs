@@ -13,6 +13,8 @@ namespace AzilEdu.Api.Controllers
     {
         private readonly AzilEduDbContext _context;
 
+        private const int MonetaryDonationTypeId = 1;
+
         public DonationsController(AzilEduDbContext context)
         {
             _context = context;
@@ -107,6 +109,10 @@ namespace AzilEdu.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<DonationDto>> CreateDonation(DonationDto donationDto)
         {
+            var validationError = ValidateDonation(donationDto);
+            if (validationError is not null)
+                return BadRequest(validationError);
+
             var donation = new Donation
             {
                 DonorId = donationDto.DonorId,
@@ -128,6 +134,10 @@ namespace AzilEdu.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<DonationDto>> UpdateDonation(int id, DonationDto donationDto)
         {
+            var validationError = ValidateDonation(donationDto);
+            if (validationError is not null)
+                return BadRequest(validationError);
+
             var donation = await _context.Donations.FirstOrDefaultAsync(d => d.Id == id);
             if (donation == null)
             {
@@ -160,6 +170,36 @@ namespace AzilEdu.Api.Controllers
             _context.Donations.Remove(donation);
             await _context.SaveChangesAsync();
             return Ok();
+        }
+
+        private static string? ValidateDonation(DonationDto donationDto)
+        {
+            if (donationDto.DonationDate.Date > DateTime.Today)
+                return "Datum donacije ne smije biti u budućnosti.";
+
+            var isMonetary = donationDto.DonationTypeId == MonetaryDonationTypeId;
+
+            if (isMonetary)
+            {
+                if (donationDto.Amount <= 0)
+                    return "Novčana donacija mora imati iznos veći od nule.";
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(donationDto.ItemName))
+                    return "Nenovčana donacija mora imati naziv.";
+
+                if (donationDto.Quantity <= 0)
+                    return "Nenovčana donacija mora imati količinu veću od nule.";
+            }
+
+            if (donationDto.Quantity < 0)
+                return "Količina ne smije biti negativna.";
+
+            if (donationDto.EstimatedValue < 0)
+                return "Procijenjena vrijednost ne smije biti negativna.";
+
+            return null;
         }
     }
 }

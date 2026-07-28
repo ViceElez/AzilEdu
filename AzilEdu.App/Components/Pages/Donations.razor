@@ -230,11 +230,6 @@ else
                 url += "?" + string.Join("&", query);
 
             donations = await Http.GetFromJsonAsync<List<DonationDto>>(url) ?? new();
-
-            foreach (var donation in donations)
-            {
-                Console.WriteLine($"Donation: {donation.Id} - {donation.DonorName} - {donation.TypeName} - {donation.StatusName}");
-            }
         }
         catch (Exception ex)
         {

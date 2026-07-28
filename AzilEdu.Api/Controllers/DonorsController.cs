@@ -21,36 +21,22 @@ namespace AzilEdu.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<DonorDto>>> GetDonors([FromQuery] int? statusId, [FromQuery] int? typeId)
         {
-            var donors = await _context.Donors
+            var query = _context.Donors
                 .Include(d => d.DonorType)
                 .Include(d => d.DonorStatus)
-                .OrderBy(d => d.FirstName)
-                .Select(d => new DonorDto
-                {
-                    Id = d.Id,
-                    FirstName = d.FirstName,
-                    LastName = d.LastName,
-                    OrganizationName = d.OrganizationName,
-                    Email = d.Email,
-                    PhoneNumber = d.PhoneNumber,
-                    Address = d.Address,
-                    City = d.City,
-                    Note = d.Note,
-                    CreatedAt = d.CreatedAt,
-                    DonorTypeId = d.DonorTypeId,
-                    TypeName = d.DonorType != null ? d.DonorType.Name : string.Empty,
-                    DonorStatusId = d.DonorStatusId,
-                    StatusName = d.DonorStatus != null ? d.DonorStatus.Name : string.Empty
-                })
-                .ToListAsync();
+                .AsQueryable();
 
             if (statusId.HasValue)
-                donors = donors.Where(d => d.DonorStatusId == statusId.Value).ToList();
+                query = query.Where(d => d.DonorStatusId == statusId.Value);
 
             if (typeId.HasValue)
-                donors = donors.Where(d => d.DonorTypeId == typeId.Value).ToList();
+                query = query.Where(d => d.DonorTypeId == typeId.Value);
 
-            return Ok(donors);
+            var donors = await query
+                .OrderBy(d => d.FirstName)
+                .ToListAsync();
+
+            return Ok(donors.Select(ToDto).ToList());
         }
 
         [HttpGet("lookup")]
@@ -76,94 +62,66 @@ namespace AzilEdu.Api.Controllers
         public async Task<ActionResult<DonorDto>> GetDonorById(int id)
         {
             var donor = await _context.Donors
-                .Include(d => d.DonorType)
-                .Include(d => d.DonorStatus)
-                .FirstOrDefaultAsync(d => d.Id == id);
+                .Include(item => item.DonorType)
+                .Include(item => item.DonorStatus)
+                .FirstOrDefaultAsync(item => item.Id == id);
 
-            if (donor == null)
+            if (donor is null)
                 return NotFound();
 
-            var dto = new DonorDto
-            {
-                Id = donor.Id,
-                FirstName = donor.FirstName,
-                LastName = donor.LastName,
-                OrganizationName = donor.OrganizationName,
-                Email = donor.Email,
-                PhoneNumber = donor.PhoneNumber,
-                Address = donor.Address,
-                City = donor.City,
-                Note = donor.Note,
-                CreatedAt = donor.CreatedAt,
-                DonorTypeId = donor.DonorTypeId,
-                TypeName = donor.DonorType != null ? donor.DonorType.Name : string.Empty,
-                DonorStatusId = donor.DonorStatusId,
-                StatusName = donor.DonorStatus != null ? donor.DonorStatus.Name : string.Empty
-            };
-
-            return Ok(dto);
+            return Ok(ToDto(donor));
         }
-
         [HttpPost]
-        public async Task<ActionResult<DonorDto>> CreateDonor(SaveDonorDto createDto)
+        public async Task<ActionResult<DonorDto>> CreateDonor(SaveDonorDto request)
         {
+            if (request.DonorTypeId <= 0 || request.DonorStatusId <= 0)
+                return BadRequest("Tip i status donatora su obavezni.");
+
             var donor = new Donor
             {
-                FirstName = createDto.FirstName,
-                LastName = createDto.LastName,
-                OrganizationName = createDto.OrganizationName,
-                Email = createDto.Email,
-                PhoneNumber = createDto.PhoneNumber,
-                Address = createDto.Address,
-                City = createDto.City,
-                Note = createDto.Note,
-                CreatedAt = DateTime.UtcNow,
-                DonorTypeId = createDto.DonorTypeId,
-                DonorStatusId = createDto.DonorStatusId
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                OrganizationName = request.OrganizationName,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber,
+                Address = request.Address,
+                City = request.City,
+                Note = request.Note,
+                CreatedAt = DateTime.Now,
+                DonorTypeId = request.DonorTypeId,
+                DonorStatusId = request.DonorStatusId
             };
 
             _context.Donors.Add(donor);
             await _context.SaveChangesAsync();
 
-            var dto = new DonorDto
-            {
-                Id = donor.Id,
-                FirstName = donor.FirstName,
-                LastName = donor.LastName,
-                OrganizationName = donor.OrganizationName,
-                Email = donor.Email,
-                PhoneNumber = donor.PhoneNumber,
-                Address = donor.Address,
-                City = donor.City,
-                Note = donor.Note,
-                CreatedAt = donor.CreatedAt,
-                DonorTypeId = donor.DonorTypeId,
-                DonorStatusId = donor.DonorStatusId
-            };
+            await _context.Entry(donor).Reference(item => item.DonorType).LoadAsync();
+            await _context.Entry(donor).Reference(item => item.DonorStatus).LoadAsync();
 
-            return CreatedAtAction(nameof(GetDonorById), new { id = dto.Id }, dto);
+            return CreatedAtAction(nameof(GetDonorById), new { id = donor.Id }, ToDto(donor));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDonor(int id, SaveDonorDto updateDto)
+        public async Task<IActionResult> UpdateDonor(int id, SaveDonorDto request)
         {
             var donor = await _context.Donors.FindAsync(id);
 
-            if (donor == null)
+            if (donor is null)
                 return NotFound();
 
-            donor.FirstName = updateDto.FirstName;
-            donor.LastName = updateDto.LastName;
-            donor.OrganizationName = updateDto.OrganizationName;
-            donor.Email = updateDto.Email;
-            donor.PhoneNumber = updateDto.PhoneNumber;
-            donor.Address = updateDto.Address;
-            donor.City = updateDto.City;
-            donor.Note = updateDto.Note;
-            donor.DonorTypeId = updateDto.DonorTypeId;
-            donor.DonorStatusId = updateDto.DonorStatusId;
+            donor.FirstName = request.FirstName;
+            donor.LastName = request.LastName;
+            donor.OrganizationName = request.OrganizationName;
+            donor.Email = request.Email;
+            donor.PhoneNumber = request.PhoneNumber;
+            donor.Address = request.Address;
+            donor.City = request.City;
+            donor.Note = request.Note;
+            donor.DonorTypeId = request.DonorTypeId;
+            donor.DonorStatusId = request.DonorStatusId;
 
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
@@ -179,6 +137,30 @@ namespace AzilEdu.Api.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private static DonorDto ToDto(Donor donor)
+        {
+            return new DonorDto
+            {
+                Id = donor.Id,
+                FirstName = donor.FirstName,
+                LastName = donor.LastName,
+                OrganizationName = donor.OrganizationName,
+                DisplayName = !string.IsNullOrWhiteSpace(donor.OrganizationName)
+                    ? donor.OrganizationName
+                    : $"{donor.FirstName} {donor.LastName}".Trim(),
+                Email = donor.Email,
+                PhoneNumber = donor.PhoneNumber,
+                Address = donor.Address,
+                City = donor.City,
+                Note = donor.Note,
+                CreatedAt = donor.CreatedAt,
+                DonorTypeId = donor.DonorTypeId,
+                TypeName = donor.DonorType?.Name ?? string.Empty,
+                DonorStatusId = donor.DonorStatusId,
+                StatusName = donor.DonorStatus?.Name ?? string.Empty
+            };
         }
     }
 }

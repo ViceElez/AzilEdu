@@ -34,11 +34,22 @@ public class AnimalsController : ControllerBase
                 Age = animal.Age,
                 ArrivalDate = animal.ArrivalDate,
                 AnimalStatusId = animal.AnimalStatusId,
-                Status = animal.AnimalStatus != null ? animal.AnimalStatus.Name : string.Empty,
-                ImageUrl = animal.ImageUrl,
+                Status = animal.AnimalStatus != null
+                    ? animal.AnimalStatus.Name
+                    : string.Empty,
+                ImageUrl = animal.Media
+                    .Where(media =>
+                        media.IsCover &&
+                        media.MediaType == AnimalMediaType.Image)
+                    .OrderBy(media => media.SortOrder)
+                    .Select(media => "/uploads/animals/" + media.StoredFileName)
+                    .FirstOrDefault() ?? animal.ImageUrl,
                 Description = animal.Description
             })
             .ToListAsync();
+
+        foreach (var animal in animals)
+            animal.ImageUrl = ToPublicImageUrl(animal.ImageUrl);
 
         return Ok(animals);
     }
@@ -62,12 +73,14 @@ public class AnimalsController : ControllerBase
     public async Task<ActionResult<AnimalDto>> GetAnimalById(int id)
     {
         var animal = await _context.Animals
-            .Include(animal => animal.AnimalStatus)
-            .FirstOrDefaultAsync(animal => animal.Id == id);
-        if (animal==null)
+            .Include(item => item.AnimalStatus)
+            .Include(item => item.Media)
+            .FirstOrDefaultAsync(item => item.Id == id);
+
+        if (animal is null)
             return NotFound();
 
-        var dto = new AnimalDto
+        return Ok(new AnimalDto
         {
             Id = animal.Id,
             Name = animal.Name,
@@ -77,10 +90,12 @@ public class AnimalsController : ControllerBase
             Age = animal.Age,
             ArrivalDate = animal.ArrivalDate,
             AnimalStatusId = animal.AnimalStatusId,
-            ImageUrl = animal.ImageUrl,
+            Status = animal.AnimalStatus != null
+                ? animal.AnimalStatus.Name
+                : string.Empty,
+            ImageUrl = ToPublicImageUrl(GetCoverImagePath(animal)),
             Description = animal.Description
-        };
-        return Ok(dto);
+        });
     }
 
     [HttpPost]
@@ -153,5 +168,26 @@ public class AnimalsController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+    private static string GetCoverImagePath(Animal animal)
+    {
+        var cover = animal.Media
+            .Where(media =>
+                media.IsCover &&
+                media.MediaType == AnimalMediaType.Image)
+            .OrderBy(media => media.SortOrder)
+            .FirstOrDefault();
+
+        return cover is null
+            ? animal.ImageUrl
+            : $"/uploads/animals/{cover.StoredFileName}";
+    }
+
+    private string ToPublicImageUrl(string imageUrl)
+    {
+        if (!imageUrl.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+            return imageUrl;
+
+        return $"{Request.Scheme}://{Request.Host}{imageUrl}";
     }
 }

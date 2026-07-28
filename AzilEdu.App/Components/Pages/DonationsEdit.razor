@@ -184,9 +184,9 @@ else
             return;
         }
 
-        if (!donationDate.HasValue)
+        if (!donationDate.HasValue || donationDate.Value > DateTime.Today)
         {
-            errorMessage = "Datum donacije je obavezan.";
+            errorMessage = "Datum donacije je obavezan i nemoze biti u budućnosti.";
             Snackbar.Add(errorMessage, Severity.Error);
             return;
         }
@@ -218,6 +218,13 @@ else
             if (model.Quantity <= 0)
             {
                 errorMessage = "Količina mora biti veća od nule.";
+                Snackbar.Add(errorMessage, Severity.Error);
+                return;
+            }
+
+            if (model.EstimatedValue < 0)
+            {
+                errorMessage = "Procijenjena vrijednost ne može biti negativna.";
                 Snackbar.Add(errorMessage, Severity.Error);
                 return;
             }

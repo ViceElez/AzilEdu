@@ -4,6 +4,7 @@
 @using AzilEdu.Shared.DTOs
 @using System.Net.Http.Json
 @inject HttpClient Http
+@inject NavigationManager Navigation
 
 <MudText Typo="Typo.h4" GutterBottom="true">Životinje</MudText>
 <MudText Typo="Typo.body1" Class="mb-4">
@@ -68,7 +69,9 @@
           Hover="true"
           Striped="true"
           Bordered="true"
-          Dense="true">
+          Dense="true"
+          OnRowClick="@((TableRowClickEventArgs<AnimalDto> args) => HandleRowClick(args.Item))"
+          RowStyle="cursor: pointer;">
     <HeaderContent>
         <MudTh>Slika</MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<AnimalDto, object>(x => x.Name)">Ime</MudTableSortLabel></MudTh>
@@ -201,5 +204,10 @@
             "Na liječenju" => Color.Warning,
             _ => Color.Default
         };
+    }
+
+    private void HandleRowClick(AnimalDto animal)
+    {
+        Navigation.NavigateTo($"/animals/{animal.Id}");
     }
 }

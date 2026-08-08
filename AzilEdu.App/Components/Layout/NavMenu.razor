@@ -55,6 +55,20 @@ else
         </MudNavLink>
     }
 
+    <MudDivider Class="my-2" /> 
+
+    <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Center" Class="px-4 py-3">
+        <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Size="Size.Medium" Color="Color.Inherit" />
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.body2" Style="font-weight: 500;">
+                @CurrentUser.User?.DisplayName
+            </MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">
+                @string.Join(", ", CurrentUser.User?.Roles ?? new())
+            </MudText>
+        </MudStack>
+    </MudStack>
+
     <MudDivider Class="my-2" />
 
     <MudNavLink Icon="@Icons.Material.Filled.Logout"

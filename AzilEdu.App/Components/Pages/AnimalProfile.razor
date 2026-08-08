@@ -1,9 +1,9 @@
 ﻿@page "/animals/{Id:int}"
 @using AzilEdu.Shared.DTOs.Animals
 @using Microsoft.AspNetCore.Components.Forms
+@inject HttpClient Http
 @using AzilEdu.App.Services
 @inject CurrentUserService CurrentUser
-@inject HttpClient Http
 
 <PageTitle>Profil životinje</PageTitle>
 
@@ -83,22 +83,52 @@ else
             <MudGrid>
                 @foreach (var media in mediaItems)
                 {
-                    @if (CanManageMedia)
-                    {
-                        <MudCardActions>
-                            @if (media.MediaType == "Image" && !media.IsCover)
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard>
+                            @if (media.MediaType == "Image")
                             {
-                                <MudButton OnClick="@(() => SetCover(media.Id))">
-                                    Postavi kao naslovnu
-                                </MudButton>
+                                <img src="@media.Url"
+                                     alt="@media.Caption"
+                                     style="width:100%;height:240px;object-fit:cover;display:block;" />
+                            }
+                            else
+                            {
+                                <video controls preload="metadata"
+                                       style="width:100%;height:240px;background:#111;display:block;">
+                                    <source src="@media.Url" type="@media.ContentType" />
+                                </video>
                             }
 
-                            <MudButton Color="Color.Error"
-                                       OnClick="@(() => DeleteMedia(media.Id))">
-                                Izbriši
-                            </MudButton>
-                        </MudCardActions>
-                    }
+                            <MudCardContent>
+                                <MudText>@(media.Caption ?? media.OriginalFileName)</MudText>
+
+                                @if (media.IsCover)
+                                {
+                                    <MudChip T="string" Color="Color.Primary" Size="Size.Small">
+                                        Naslovna slika
+                                    </MudChip>
+                                }
+                            </MudCardContent>
+
+                            @if (CanManageMedia)
+                            {
+                                <MudCardActions>
+                                    @if (media.MediaType == "Image" && !media.IsCover)
+                                    {
+                                        <MudButton OnClick="@(() => SetCover(media.Id))">
+                                            Postavi kao naslovnu
+                                        </MudButton>
+                                    }
+
+                                    <MudButton Color="Color.Error"
+                                               OnClick="@(() => DeleteMedia(media.Id))">
+                                        Izbriši
+                                    </MudButton>
+                                </MudCardActions>
+                            }
+
+                        </MudCard>
+                    </MudItem>
                 }
             </MudGrid>
         }
@@ -107,6 +137,8 @@ else
 
 @code {
     private const long MaxFileSize = 25 * 1024 * 1024;
+    private bool CanManageMedia =>
+    CurrentUser.HasAnyRole("Admin", "Employee");
 
     [Parameter]
     public int Id { get; set; }
@@ -118,8 +150,6 @@ else
     private string? errorMessage;
     private bool isLoading = true;
     private bool isUploading;
-    private bool CanManageMedia =>
-    CurrentUser.HasAnyRole("Admin", "Employee");
 
     private string ProfileImageUrl =>
             mediaItems.FirstOrDefault(item =>

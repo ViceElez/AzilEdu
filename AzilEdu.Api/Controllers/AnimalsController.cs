@@ -185,9 +185,14 @@ public class AnimalsController : ControllerBase
 
     private string ToPublicImageUrl(string imageUrl)
     {
-        if (!imageUrl.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrWhiteSpace(imageUrl))
             return imageUrl;
 
-        return $"{Request.Scheme}://{Request.Host}{imageUrl}";
+        if (imageUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+            imageUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            return imageUrl;
+
+        var path = imageUrl.StartsWith("/") ? imageUrl : $"/{imageUrl}";
+        return $"{Request.Scheme}://{Request.Host}{path}";
     }
 }

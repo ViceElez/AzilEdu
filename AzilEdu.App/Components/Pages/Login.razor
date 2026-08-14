@@ -5,6 +5,7 @@
 @using AzilEdu.Shared.DTOs
 @using System.Net.Http.Json
 @using AzilEdu.Shared.DTOs.Users
+@using AzilEdu.Shared.DTOs.Responses
 
 @inject HttpClient Http
 @inject CurrentUserService CurrentUser
@@ -67,15 +68,15 @@
                 return;
             }
 
-            var user = await response.Content.ReadFromJsonAsync<LoggedUserDto>();
+            var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
 
-            if (user is null)
+            if (loginResponse is null)
             {
                 errorMessage = "API nije vratio podatke o korisniku.";
                 return;
             }
 
-            CurrentUser.Login(user);
+            await CurrentUser.LoginAsync(loginResponse);
             Navigation.NavigateTo("/");
         }
         finally

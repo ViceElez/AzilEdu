@@ -111,16 +111,8 @@ else
                 return;
             }
 
-            var volunteerId = CurrentUser.User?.VolunteerId;
-
-            if (volunteerId is null)
-            {
-                errorMessage = "Korisnik nije povezan s volonterom.";
-                return;
-            }
-
             tasks = await Http.GetFromJsonAsync<List<VolunteerTaskDto>>(
-                            $"api/volunteertasks?volunteerId={volunteerId}") ?? new();
+                "api/volunteertasks/mine") ?? new();
         }
         catch (HttpRequestException ex)
         {

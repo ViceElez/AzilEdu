@@ -88,9 +88,9 @@ else
         _ = InvokeAsync(StateHasChanged);
     }
 
-    private void HandleLogout()
+    private async Task HandleLogout()
     {
-        CurrentUser.Logout();
+        await CurrentUser.LogoutAsync();
         Navigation.NavigateTo("/login");
     }
 

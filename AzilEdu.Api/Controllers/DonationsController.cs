@@ -21,6 +21,8 @@ namespace AzilEdu.Api.Controllers
         }
 
         [HttpGet]
+        [Microsoft.AspNetCore.Authorization.Authorize(
+            Policy = Security.AuthorizationPolicies.Staff)]
         public async Task<ActionResult<List<DonationDto>>> GetDonations(
             [FromQuery] int? statusId, [FromQuery] int? typeId, [FromQuery] int? donorId)
         {
@@ -77,7 +79,49 @@ namespace AzilEdu.Api.Controllers
             return Ok(donations);
         }
 
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Donor")]
+        [HttpGet("mine")]
+        public async Task<ActionResult<List<DonationDto>>> GetMyDonations()
+        {
+            var donorClaim = User.FindFirst(
+                Security.AppClaimTypes.DonorId)?.Value;
+
+            if (!int.TryParse(donorClaim, out var donorId))
+                return Forbid();
+
+            var donations = await _context.Donations
+                .Include(donation => donation.Donor)
+                .Include(donation => donation.DonationType)
+                .Include(donation => donation.DonationStatus)
+                .Where(donation => donation.DonorId == donorId)
+                .OrderByDescending(donation => donation.DonationDate)
+                .ThenByDescending(donation => donation.Id)
+                .ToListAsync();
+           
+            var donationDtos = donations.Select(donation => new DonationDto
+            {
+                Id = donation.Id,
+                DonorId = donation.DonorId,
+                DonorName = !string.IsNullOrEmpty(donation.Donor.OrganizationName)
+                    ? donation.Donor.OrganizationName
+                    : (donation.Donor.FirstName + " " + donation.Donor.LastName).Trim(),
+                DonationTypeId = donation.DonationTypeId,
+                TypeName = donation.DonationType.Name,
+                DonationStatusId = donation.DonationStatusId,
+                StatusName = donation.DonationStatus.Name,
+                DonationDate = donation.DonationDate,
+                Amount = donation.Amount,
+                ItemName = donation.ItemName,
+                Quantity = donation.Quantity,
+                EstimatedValue = donation.EstimatedValue,
+                Notes = donation.Notes
+            }).ToList();
+            return Ok(donationDtos);
+        }
+
         [HttpGet("{id}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(
+            Policy = Security.AuthorizationPolicies.Staff)]
         public async Task<ActionResult<DonationDto>> GetDonation(int id)
         {
             var donation = await _context.Donations
@@ -107,6 +151,8 @@ namespace AzilEdu.Api.Controllers
         }
 
         [HttpPost]
+        [Microsoft.AspNetCore.Authorization.Authorize(
+            Policy = Security.AuthorizationPolicies.Staff)]
         public async Task<ActionResult<DonationDto>> CreateDonation(DonationDto donationDto)
         {
             var validationError = ValidateDonation(donationDto);
@@ -132,6 +178,8 @@ namespace AzilEdu.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(
+            Policy = Security.AuthorizationPolicies.Staff)]
         public async Task<ActionResult<DonationDto>> UpdateDonation(int id, DonationDto donationDto)
         {
             var validationError = ValidateDonation(donationDto);
@@ -159,6 +207,8 @@ namespace AzilEdu.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(
+            Policy = Security.AuthorizationPolicies.Staff)]
         public async Task<ActionResult> DeleteDonation(int id)
         {
             var donation = await _context.Donations.FirstOrDefaultAsync(d => d.Id == id);

@@ -1,7 +1,10 @@
 ﻿using AzilEdu.Api.Data;
+using AzilEdu.Api.Security;
 using AzilEdu.Shared.DTOs;
+using AzilEdu.Shared.DTOs.Responses;
 using AzilEdu.Shared.DTOs.Users;
 using AzilEdu.Shared.Models.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,25 +16,33 @@ namespace AzilEdu.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly AzilEduDbContext _context;
+    private readonly JwtTokenService _tokenService;
 
-    public AuthController(AzilEduDbContext context)
+    public AuthController(
+        AzilEduDbContext context,
+        JwtTokenService tokenService)
     {
         _context = context;
+        _tokenService = tokenService;
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<ActionResult<LoggedUserDto>> Login(LoginRequestDto request)
+    public async Task<ActionResult<LoginResponseDto>> Login(LoginRequestDto request)
     {
+        var email = request.Email.Trim().ToLowerInvariant();
+
         var user = await _context.AppUsers
             .Include(item => item.UserRoles)
             .ThenInclude(item => item.AppRole)
-            .FirstOrDefaultAsync(item => item.Email == request.Email);
+            .FirstOrDefaultAsync(item => item.Email == email);
 
         if (user is null || !user.IsActive)
             return Unauthorized("Pogrešan email ili lozinka.");
 
         var hasher = new PasswordHasher<AppUser>();
-        var result = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+        var result = hasher.VerifyHashedPassword(
+            user, user.PasswordHash, request.Password);
 
         if (result == PasswordVerificationResult.Failed)
             return Unauthorized("Pogrešan email ili lozinka.");
@@ -42,15 +53,6 @@ public class AuthController : ControllerBase
             .OrderBy(name => name)
             .ToList();
 
-        return Ok(new LoggedUserDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            DisplayName = user.DisplayName,
-            Roles = roles,
-            VolunteerId = user.VolunteerId,
-            DonorId = user.DonorId,
-            EmployeeId = user.EmployeeId
-        });
+        return Ok(_tokenService.CreateLoginResponse(user, roles));
     }
 }

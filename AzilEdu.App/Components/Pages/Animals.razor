@@ -87,7 +87,10 @@
     <RowTemplate>
         <MudTd DataLabel="Slika">
             <MudAvatar Size="Size.Large">
-                <MudImage Src="@context.ImageUrl" Alt="@context.Name" />
+                <img src="@context.ImageUrl"
+                     alt="@context.Name"
+                     onerror="this.onerror=null;this.src='/images/animals/placeholder.svg';"
+                     style="width:100%;height:100%;object-fit:cover;" />
             </MudAvatar>
         </MudTd>
         <MudTd DataLabel="Ime">@context.Name</MudTd>

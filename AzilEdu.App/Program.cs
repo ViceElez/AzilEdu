@@ -1,6 +1,7 @@
 using AzilEdu.App.Components;
-using MudBlazor.Services;
 using AzilEdu.App.Services;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddScoped(sp => new HttpClient
 });
 
 builder.Services.AddScoped<CurrentUserService>();
+builder.Services.AddScoped<ProtectedLocalStorage>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

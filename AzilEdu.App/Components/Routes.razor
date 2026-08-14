@@ -1,6 +1,52 @@
-﻿<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
-    <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
-        <FocusOnNavigate RouteData="routeData" Selector="h1" />
-    </Found>
-</Router>
+﻿@using AzilEdu.App.Services
+@inject CurrentUserService CurrentUser
+@inject NavigationManager Navigation
+
+<CascadingValue Value="CurrentUser">
+    @if (!CurrentUser.IsInitialized)
+    {
+        <div class="d-flex justify-center pa-8">
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+        </div>
+    }
+    else
+    {
+        <Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+            <Found Context="routeData">
+                <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+                <FocusOnNavigate RouteData="routeData" Selector="h1" />
+            </Found>
+        </Router>
+    }
+</CascadingValue>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Inicijalizuj CurrentUser servis - must be in OnAfterRenderAsync for JS interop
+            if (!CurrentUser.IsInitialized)
+            {
+                await CurrentUser.InitializeAsync();
+                StateHasChanged();
+            }
+
+            // Provjeri da li je korisnik ulogovan
+            var relativePath = Navigation.ToBaseRelativePath(Navigation.Uri);
+
+            if (!CurrentUser.IsLoggedIn &&
+                !relativePath.StartsWith("login", StringComparison.OrdinalIgnoreCase))
+            {
+                Navigation.NavigateTo("/login");
+            }
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

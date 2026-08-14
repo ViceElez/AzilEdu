@@ -54,6 +54,8 @@ public class AnimalMediaController : ControllerBase
     [HttpPost]
     [Consumes("multipart/form-data")]
     [RequestSizeLimit(MaxFileSize)]
+    [Microsoft.AspNetCore.Authorization.Authorize(
+        Policy = AzilEdu.Api.Security.AuthorizationPolicies.Staff)]
     public async Task<ActionResult<AnimalMediaDto>> Upload(
         int animalId,
         IFormFile file,
@@ -119,6 +121,8 @@ public class AnimalMediaController : ControllerBase
     }
 
     [HttpPut("{mediaId:int}/cover")]
+    [Microsoft.AspNetCore.Authorization.Authorize(
+        Policy = AzilEdu.Api.Security.AuthorizationPolicies.Staff)]
     public async Task<IActionResult> SetCover(int animalId, int mediaId)
     {
         var media = await _context.AnimalMedia
@@ -141,6 +145,8 @@ public class AnimalMediaController : ControllerBase
     }
 
     [HttpDelete("{mediaId:int}")]
+    [Microsoft.AspNetCore.Authorization.Authorize(
+        Policy = AzilEdu.Api.Security.AuthorizationPolicies.Staff)]
     public async Task<IActionResult> Delete(int animalId, int mediaId)
     {
         var media = await _context.AnimalMedia.FirstOrDefaultAsync(item =>
@@ -189,7 +195,7 @@ public class AnimalMediaController : ControllerBase
         {
             Id = media.Id,
             AnimalId = media.AnimalId,
-            Url = $"{Request.Scheme}://{Request.Host}{relativeUrl}",
+            Url = ToPublicImageUrl(relativeUrl), 
             OriginalFileName = media.OriginalFileName,
             ContentType = media.ContentType,
             MediaType = media.MediaType.ToString(),
@@ -199,5 +205,18 @@ public class AnimalMediaController : ControllerBase
             SortOrder = media.SortOrder,
             UploadedAt = media.UploadedAt
         };
+    }
+
+    private string ToPublicImageUrl(string imageUrl)
+    {
+        if (string.IsNullOrWhiteSpace(imageUrl))
+            return imageUrl;
+
+        if (imageUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+            imageUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            return imageUrl;
+
+        var path = imageUrl.StartsWith("/") ? imageUrl : $"/{imageUrl}";
+        return $"{Request.Scheme}://{Request.Host}{path}";
     }
 }

@@ -69,6 +69,10 @@ namespace AzilEdu.Api.Migrations
                 name: "FK_Employees_EmployeeTypes_EmployeePositionId",
                 table: "Employees");
 
+            // ✅ NOVO: Prvo postavi NULL prije brisanja seed podataka
+            migrationBuilder.Sql("UPDATE Employees SET EmployeeStatusId = NULL WHERE EmployeeStatusId IN (1, 2, 3)");
+            migrationBuilder.Sql("UPDATE Employees SET EmployeePositionId = NULL WHERE EmployeePositionId IN (1, 2, 3, 4)");
+
             migrationBuilder.DeleteData(
                 table: "EmployeeStatuses",
                 keyColumn: "Id",

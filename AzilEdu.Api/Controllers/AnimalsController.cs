@@ -11,6 +11,8 @@ namespace AzilEdu.Api.Controllers;
 [Route("api/[controller]")]
 public class AnimalsController : ControllerBase
 {
+    private const string PlaceholderImageUrl = "/uploads/animals/placeholder.svg";
+
     private readonly AzilEduDbContext _context;
 
     public AnimalsController(AzilEduDbContext context)
@@ -99,6 +101,8 @@ public class AnimalsController : ControllerBase
     }
 
     [HttpPost]
+    [Microsoft.AspNetCore.Authorization.Authorize(
+        Policy = AzilEdu.Api.Security.AuthorizationPolicies.Staff)]
     public async Task<ActionResult<AnimalDto>> CreateAnimal(SaveAnimalDto dto)
     {
         var animal = new Animal
@@ -135,6 +139,8 @@ public class AnimalsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Microsoft.AspNetCore.Authorization.Authorize(
+        Policy = AzilEdu.Api.Security.AuthorizationPolicies.Staff)]
     public async Task<IActionResult> UpdateAnimal(int id, SaveAnimalDto dto)
     {
         var animal = await _context.Animals.FindAsync(id);
@@ -148,7 +154,7 @@ public class AnimalsController : ControllerBase
         animal.Gender = dto.Gender;
         animal.Age = dto.Age;
         animal.ArrivalDate = dto.ArrivalDate;
-        animal.AnimalStatusId = dto.AnimalStatusId; 
+        animal.AnimalStatusId = dto.AnimalStatusId;
         animal.ImageUrl = dto.ImageUrl;
         animal.Description = dto.Description;
 
@@ -157,6 +163,8 @@ public class AnimalsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Microsoft.AspNetCore.Authorization.Authorize(
+        Policy = AzilEdu.Api.Security.AuthorizationPolicies.Staff)]
     public async Task<IActionResult> DeleteAnimal(int id)
     {
         var animal = await _context.Animals.FindAsync(id);
@@ -169,6 +177,7 @@ public class AnimalsController : ControllerBase
 
         return NoContent();
     }
+
     private static string GetCoverImagePath(Animal animal)
     {
         var cover = animal.Media
@@ -186,7 +195,7 @@ public class AnimalsController : ControllerBase
     private string ToPublicImageUrl(string imageUrl)
     {
         if (string.IsNullOrWhiteSpace(imageUrl))
-            return imageUrl;
+            return $"{Request.Scheme}://{Request.Host}{PlaceholderImageUrl}";
 
         if (imageUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
             imageUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))

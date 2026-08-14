@@ -68,3 +68,8 @@ dotnet run
 | 6 | `GET /api/my-tasks` | Volunteer 1 | Dohvati samo svoje zadatke | 200 |
 | 7 | `GET /api/volunteer-tasks` | Employee 1 | Dohvat volonterski zadataka | 200 |
 | 8 | `GET /api/my-donations` | Donor 1 | Dohvati samo svoje donacije | 200 |
+
+
+## 401 vs 403
+
+401 error code se događa kada korisnik nije autentificiran, a 403 error je kada je korisnik uspješno autentificiran ali nema prava pristupa tom sadržaju.

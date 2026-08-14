@@ -69,6 +69,8 @@ dotnet run
 | 7 | `GET /api/volunteer-tasks` | Employee 1 | Dohvat volonterski zadataka | 200 |
 | 8 | `GET /api/my-donations` | Donor 1 | Dohvati samo svoje donacije | 200 |
 
+## Dokaz — volonter ne vidi tuđe zadatke, donator ne vidi tuđe donacije
+Razlog zašto volonter ne može dohvatiti tuđe zadatke, a donator tuđe donacije, je taj što se `UserId` **ne šalje kao parametar** u zahtjevu (npr. `/api/my-tasks?userId=5`), nego se dohvaća isključivo **iz JWT tokena** ulogiranog korisnika, na strani servera. Korisnik nema mogućnost izmijeniti ili proslijediti tuđi ID jer taj ID nikad nije dio requesta — server ga sam izvlači iz claimova tokena i njime filtrira podatke.
 
 ## 401 vs 403
 

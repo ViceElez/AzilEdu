@@ -4,6 +4,14 @@
 
 Unutar solutiona treba desni klik i pod opcijom **Configure Startup Projects** odabrati `AzilEdu.App` i `AzilEdu.Api`.
 
+Unutar AzilEdu.Api projekta, unutar appsettings.json treba dodati konfiguraciju JWT token secreta:   
+"Jwt": {
+    "Issuer": "AzilEdu.Api",
+    "Audience": "AzilEdu.App",
+    "SigningKey": "vasa_sifra",
+    "ExpirationMinutes": 60
+}
+
 Nakon namještanja projekta, aplikacija se pokreće klikom na botun **Start**.
 
 Preko terminala, pokretanje projekta ide ovako:
